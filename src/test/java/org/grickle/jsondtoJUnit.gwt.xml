@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='org.grickle.jsondto'/>
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/jsondto/greet" class="org.grickle.server.GreetingServiceImpl" />
+
+</module>
