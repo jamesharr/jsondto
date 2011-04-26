@@ -1,5 +1,8 @@
 package org.grickle.client;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
 /**
  * This field will not be nullified if its corresponding JSON data cannot be found.
  * 
@@ -16,6 +19,7 @@ package org.grickle.client;
  * 
  * When unpickling the data '{name:"first", children:null}', the children
  */
+@Target(ElementType.FIELD)
 public @interface DoNotNullify
 {
 

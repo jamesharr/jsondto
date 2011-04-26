@@ -1,4 +1,7 @@
 RPC Generator guts
+   String data = "";
+   String url;
+   RequestBuilder.Method method;
    o.getHTTPMethod(JMethod)
    o.generateParameterPickleCode(JMethod)
      o.pickleParameter(JParameter)
@@ -25,7 +28,7 @@ PicklerGenerator
        >  changes to _GT_
        .  changes to _DOT_
        [] changes to _ARRAY_
-   .generate()   [generates class on disk, implemented by sub class]
+   .generate()     [generates class on disk, implemented by sub class]
 
 PicklerGenerator implementations
    MapPicklerGenerator
@@ -34,7 +37,7 @@ PicklerGenerator implementations
    ObjectPicklerGenerator
     PicklerGenerator.pickleField(JField)
     PicklerGenerator.unpickleField(JField)
-
+  .generateJavaSourceCode()
 
 GWT front ends:
  - JSONRPCPickler
