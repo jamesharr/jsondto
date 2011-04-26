@@ -20,7 +20,6 @@ public class PicklerProxyGenerator
     private static final String JSONVALUE_CLS = "com.google.gwt.json.client.JSONValue";
 
     private JClassType picklerIface;
-    private boolean generated = false;
     private GeneratorContext context;
 
     public PicklerProxyGenerator(TreeLogger logger, GeneratorContext context, JType pickler) throws UnableToCompleteException
@@ -50,11 +49,6 @@ public class PicklerProxyGenerator
      */
     public void generate(TreeLogger logger) throws UnableToCompleteException
     {
-        if ( generated )
-            return;
-
-        generated = true;
-
         // Get supporting data
         JClassType pickledType = getPickledType(logger, context.getTypeOracle());
         SourceWriter src = getWriter(logger);
