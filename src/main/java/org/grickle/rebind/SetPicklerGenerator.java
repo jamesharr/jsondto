@@ -1,0 +1,21 @@
+package org.grickle.rebind;
+
+import com.google.gwt.core.ext.typeinfo.JType;
+
+public class SetPicklerGenerator extends PicklerGenerator
+{
+
+    SetPicklerGenerator(PicklerGeneratorFactory factory, JType type)
+    {
+        super(factory, type);
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    void generateJavaSourceCode()
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+}
