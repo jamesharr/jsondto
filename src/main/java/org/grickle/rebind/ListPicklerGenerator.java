@@ -5,7 +5,7 @@ import com.google.gwt.core.ext.typeinfo.JType;
 public class ListPicklerGenerator extends PicklerGenerator
 {
 
-    ListPicklerGenerator(PicklerGeneratorFactory factory, JType type)
+    ListPicklerGenerator(PicklerFactory factory, JType type)
     {
         super(factory, type);
         // TODO Auto-generated constructor stub

@@ -7,17 +7,17 @@ import com.google.gwt.core.ext.typeinfo.JType;
  */
 public abstract class PicklerGenerator
 {
-    private PicklerGeneratorFactory factory;
+    private PicklerFactory factory;
     private JType type;
     boolean isGenerated = false;
 
-    PicklerGenerator(PicklerGeneratorFactory factory, JType type)
+    PicklerGenerator(PicklerFactory factory, JType type)
     {
         this.factory = factory;
         this.type = type;
     }
 
-    final PicklerGeneratorFactory getFactory()
+    final PicklerFactory getFactory()
     {
         return factory;
     }
