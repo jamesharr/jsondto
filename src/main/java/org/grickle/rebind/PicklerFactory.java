@@ -3,7 +3,7 @@ package org.grickle.rebind;
 import com.google.gwt.core.ext.typeinfo.JType;
 
 /**
- * Singleton to get PicklerGenerator objects.
+ * Singleton used to get a static class for pickling and unpickling.
  */
 public class PicklerFactory
 {

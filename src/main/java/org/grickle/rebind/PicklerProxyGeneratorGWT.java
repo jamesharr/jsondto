@@ -8,23 +8,21 @@ import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.NotFoundException;
 
 /**
- * GWT compiler tie in for PicklerProxyGenerator
+ * GWT compiler tie in for PicklerProxyFactory
  */
 public class PicklerProxyGeneratorGWT extends Generator
 {
-
     @Override
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)
     throws UnableToCompleteException
     {
         try
         {
-            PicklerProxyGeneratorFactory f = PicklerProxyGeneratorFactory.getInstance();
             JType type = context.getTypeOracle().getType(typeName);
             TreeLogger sublogger = logger.branch(TreeLogger.INFO, "Generating implementaiton for " + typeName);
-            PicklerProxyGenerator pgen = f.getProxyGenerator(sublogger, context, type);
-            pgen.generate(sublogger);
-            return pgen.getImplName();
+            PicklerProxyGenerator ppf = new PicklerProxyGenerator(sublogger, context, type);
+            ppf.generate(sublogger);
+            return ppf.getImplName();
         } catch (NotFoundException e)
         {
             e.printStackTrace();

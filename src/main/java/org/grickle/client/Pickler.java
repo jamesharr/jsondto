@@ -9,7 +9,7 @@ import com.google.gwt.json.client.JSONValue;
  * because sometimes we need to pickle/unpickle primitives like integers, which we can't
  * do with generics.
  */
-public interface PicklerProxy<T>
+public interface Pickler<T>
 {
     JSONValue pickle(T obj);
     T unpickle(JSONValue json);

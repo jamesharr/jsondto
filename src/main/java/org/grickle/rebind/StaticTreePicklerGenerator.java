@@ -2,10 +2,10 @@ package org.grickle.rebind;
 
 import com.google.gwt.core.ext.typeinfo.JType;
 
-public class ListPicklerGenerator extends PicklerGenerator
+public class StaticTreePicklerGenerator extends StaticPicklerGenerator
 {
 
-    ListPicklerGenerator(PicklerFactory factory, JType type)
+    StaticTreePicklerGenerator(PicklerFactory factory, JType type)
     {
         super(factory, type);
         // TODO Auto-generated constructor stub
