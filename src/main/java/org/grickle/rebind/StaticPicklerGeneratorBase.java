@@ -5,19 +5,19 @@ import com.google.gwt.core.ext.typeinfo.JType;
 /**
  * Generate pickler
  */
-public abstract class StaticPicklerGenerator
+public abstract class StaticPicklerGeneratorBase
 {
-    private PicklerFactory factory;
+    private StaticPicklerFactory factory;
     private JType type;
     boolean isGenerated = false;
 
-    StaticPicklerGenerator(PicklerFactory factory, JType type)
+    StaticPicklerGeneratorBase(StaticPicklerFactory factory, JType type)
     {
         this.factory = factory;
         this.type = type;
     }
 
-    final PicklerFactory getFactory()
+    final StaticPicklerFactory getFactory()
     {
         return factory;
     }

@@ -8,7 +8,10 @@ import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.NotFoundException;
 
 /**
- * GWT compiler tie in for PicklerProxyFactory
+ * GWT compiler tie in for PicklerProxyGenerator.
+ * 
+ * Note, this is essentially just a wrapper. I'd like to keep it this way I can do something sane
+ * if I find out that this gets called for every instance of GWT.create()
  */
 public class PicklerProxyGeneratorGWT extends Generator
 {

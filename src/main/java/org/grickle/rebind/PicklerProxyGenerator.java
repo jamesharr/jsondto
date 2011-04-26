@@ -54,7 +54,7 @@ public class PicklerProxyGenerator
         SourceWriter src = getWriter(logger);
 
         // Get static-style pickler
-        PicklerFactory pf = PicklerFactory.getInstance();
+        StaticPicklerFactory pf = StaticPicklerFactory.getInstance();
         String staticPickler = pf.getPickler(pickledType);
 
         // Generate class

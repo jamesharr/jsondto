@@ -5,17 +5,17 @@ import com.google.gwt.core.ext.typeinfo.JType;
 /**
  * Singleton used to get a static class for pickling and unpickling.
  */
-public class PicklerFactory
+public class StaticPicklerFactory
 {
-    private static PicklerFactory instance = null;
-    public static PicklerFactory getInstance()
+    private static StaticPicklerFactory instance = null;
+    public static StaticPicklerFactory getInstance()
     {
         if ( instance != null )
-            instance = new PicklerFactory();
+            instance = new StaticPicklerFactory();
         return instance;
     }
 
-    private PicklerFactory()
+    private StaticPicklerFactory()
     {
     }
 
