@@ -12,15 +12,16 @@ import java.lang.annotation.Target;
  * class Foo
  * {
  *   String name;
- *   @DoNotNullify
+ *   @IgnoreNull
  *   List<Foo> children = new LinkedList<foo>();
  * }
  * </pre>
  * 
- * When unpickling the data '{name:"first", children:null}', the children
+ * When unpickling the data '{name:"first", children:null}', the children will end up
+ * being an empty list instead of null, which may help eliminate some corner cases.
  */
 @Target(ElementType.FIELD)
-public @interface DoNotNullify
+public @interface IgnoreNull
 {
 
 }

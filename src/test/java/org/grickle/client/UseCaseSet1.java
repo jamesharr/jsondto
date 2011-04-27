@@ -41,7 +41,7 @@ public interface UseCaseSet1 extends JSONRemoteService
         // Can be present & set, can be present and null, or can be absent.
         @Optional Integer l;
 
-        @DoNotNullify
+        @IgnoreNull
         String foo = "default value";
 
         // These are not touched by the pickler.
@@ -75,7 +75,7 @@ public interface UseCaseSet1 extends JSONRemoteService
     {
         // The DontNullify annotation tells the pickler to avoid nullifying this attribute if the
         // JSON looks like '{"stuff":null}', but rather to leave it as default.
-        @DoNotNullify
+        @IgnoreNull
         Set<Integer> stuff = new TreeSet<Integer>();
     }
 

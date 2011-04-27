@@ -1,4 +1,5 @@
 .settings
+*.swp
 target/
 war/
 src/main/webapp/WEB-INF/deploy/
