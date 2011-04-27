@@ -5,7 +5,7 @@ import com.google.gwt.core.ext.typeinfo.JType;
 /**
  * Generate pickler
  */
-public abstract class StaticPicklerGeneratorBase
+public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerator
 {
     private StaticPicklerFactory factory;
     private JType type;

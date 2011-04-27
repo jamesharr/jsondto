@@ -55,7 +55,7 @@ public class PicklerProxyGenerator
 
         // Get static-style pickler
         StaticPicklerFactory pf = StaticPicklerFactory.getInstance();
-        String staticPickler = pf.getPickler(pickledType);
+        String staticPickler = pf.getPickler(logger, context, pickledType);
 
         // Generate class
         src.indent();

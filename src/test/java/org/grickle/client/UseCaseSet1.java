@@ -26,6 +26,7 @@ public interface UseCaseSet1 extends JSONRemoteService
 
     // Pickling object is supported. Will implement by the pickler subclassing the type (just so it has access
     // privileges to member variables).
+    @IsJSONSerializable
     static class BasicObject
     {
         // If these aren't present in JSON, throw an exception
@@ -55,6 +56,7 @@ public interface UseCaseSet1 extends JSONRemoteService
 
     // Self-nesting objects ill be supported, though circular references won't be.
     // Pickling object graphs with cycles has undefined behavior (probably an infinite loop).
+    @IsJSONSerializable
     static class TreeObject
     {
         String name;
@@ -71,6 +73,7 @@ public interface UseCaseSet1 extends JSONRemoteService
     void case5d(List<BasicObject> o, AsyncCallback<List<BasicObject>> cb);
 
     // In the case that they are initialized already for us, we use the defaults
+    @IsJSONSerializable
     static class MyPickleable
     {
         // The DontNullify annotation tells the pickler to avoid nullifying this attribute if the
@@ -89,6 +92,7 @@ public interface UseCaseSet1 extends JSONRemoteService
     // Use non-natural ordering. Either the pickler needs to be smart enough to pick up on the fact that this is
     // a TreeSet, or we need to provide a way to manually pickle this damn thing.
     @SuppressWarnings("serial")
+    @IsJSONSerializable
     static class BasicObjectSet extends TreeSet<BasicObject>
     {
         static class BasicObjectComparator implements Comparator<BasicObject>
