@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.grickle.client.IsJSONSerializable;
+import org.grickle.client.PrimitivePicklers;
 
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
@@ -19,13 +20,16 @@ public class StaticPicklerFactory
     private static StaticPicklerFactory instance = null;
     public static StaticPicklerFactory getInstance()
     {
-        if ( instance != null )
+        if ( instance == null )
             instance = new StaticPicklerFactory();
         return instance;
     }
 
     private StaticPicklerFactory()
     {
+        picklerImpls.put("int", PrimitivePicklers.IntPickler.class.getName());
+        picklerImpls.put("Integer", PrimitivePicklers.IntegerPickler.class.getName());
+        picklerImpls.put(String.class.getName(), PrimitivePicklers.StringPickler.class.getName());
     }
 
     Map<String,String> picklerImpls = new TreeMap<String,String>();

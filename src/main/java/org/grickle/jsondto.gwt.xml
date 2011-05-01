@@ -9,5 +9,7 @@
   <source path='shared'/>
   <inherits name="com.google.gwt.junit.JUnit"/>
   <inherits name="com.google.gwt.json.JSON"/>
-
+  <generate-with class="org.grickle.rebind.PicklerProxyGeneratorGWT">
+    <when-type-assignable class="org.grickle.client.Pickler"/>
+  </generate-with>
 </module>
