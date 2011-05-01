@@ -79,7 +79,7 @@ public class PicklerProxyGenerator
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
         composerFactory.addImplementedInterface(picklerIface.getQualifiedSourceName());
         PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);
-        SourceWriter src = composerFactory.createSourceWriter(printWriter);
+        SourceWriter src = composerFactory.createSourceWriter(context, printWriter);
         return src;
     }
 
