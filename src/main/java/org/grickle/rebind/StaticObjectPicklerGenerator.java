@@ -128,7 +128,6 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
 
                 // key present and has value
                 src.println("if ( fieldValue.isNull() != " + JSONNULL_CLS + ".getInstance() )");
-                src.indent();
                 unpickle_present(src, name, fieldPickler);
 
                 // Key present, but null

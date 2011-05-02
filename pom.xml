@@ -97,7 +97,7 @@
           <systemProperties>
             <property>
               <name>gwt.args</name>
-              <value>-out target/www</value>
+              <value>-out target/www -gen target/gen</value>
             </property>
           </systemProperties>
         </configuration>

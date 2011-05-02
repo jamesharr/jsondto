@@ -58,7 +58,6 @@ public class PicklerProxyGenerator
         String staticPickler = pf.getPickler(logger, context, pickledType);
 
         // Generate class
-        src.indent();
         src.println("public " + JSONVALUE_CLS + " pickle(" + pickledType.getQualifiedSourceName() + " obj)");
         src.println("{");
         src.indentln("return " + staticPickler + ".pickle(obj);");
