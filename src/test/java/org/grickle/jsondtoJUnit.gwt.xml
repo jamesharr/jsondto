@@ -4,7 +4,6 @@
   <inherits name='org.grickle.jsondto'/>
 
   <!-- Specify the path to any remote services.                   -->
-  <servlet path="/jsondto/greet" class="org.grickle.server.GreetingServiceImpl" />
   <inherits name="com.google.gwt.junit.JUnit"/>
 
 </module>

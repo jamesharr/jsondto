@@ -5,17 +5,6 @@
 
 <web-app>
   
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>org.grickle.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/jsondto/greet</url-pattern>
-  </servlet-mapping>
-  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>jsondto.html</welcome-file>
