@@ -1,39 +1,55 @@
 package org.grickle.rebind;
 
+import java.io.PrintWriter;
+
+import com.google.gwt.core.ext.GeneratorContext;
+import com.google.gwt.core.ext.TreeLogger;
+import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JType;
+import com.google.gwt.json.client.JSONNull;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
+import com.google.gwt.user.rebind.SourceWriter;
 
 /**
  * Generate pickler
  */
 public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerator
 {
-    private StaticPicklerFactory factory;
-    private JType type;
-    boolean isGenerated = false;
+    StaticPicklerFactory factory;
+    JType type;
+    GeneratorContext context;
+    TreeLogger logger;
 
-    StaticPicklerGeneratorBase(StaticPicklerFactory factory, JType type)
+    static final String JSONOBJECT_CLS = JSONObject.class.getName();
+    static final String JSONVALUE_CLS = JSONValue.class.getName();
+    static final String JSONNULL_CLS = JSONNull.class.getName();
+
+    private boolean isGenerated = false;
+
+    public StaticPicklerGeneratorBase(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
     {
+        this.context = context;
+        this.logger = logger;
         this.factory = factory;
         this.type = type;
     }
 
-    final StaticPicklerFactory getFactory()
-    {
-        return factory;
-    }
-
+    @Override
     final public JType getPicklerType()
     {
         return type;
     }
 
+    @Override
     final public String getPicklerClassName()
     {
-        // TODO
-        return null;
+        return NameMangler.getPackageName(type) + "." + NameMangler.getPicklerName(type);
     }
 
-    final public void generate()
+    @Override
+    final public void generate() throws UnableToCompleteException
     {
         if ( isGenerated )
             return;
@@ -43,8 +59,31 @@ public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerat
         generateJavaSourceCode();
     }
 
+    final protected SourceWriter startClassFile(TreeLogger logger, String superClass)
+    {
+        String packageName = NameMangler.getPackageName(type);
+        String picklerImplName = NameMangler.getPicklerName(type);
+        ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
+        if ( superClass != null )
+            composerFactory.setSuperclass(superClass);
+        PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);
+        SourceWriter src = composerFactory.createSourceWriter(context, printWriter);
+        return src;
+    }
+
     /**
      * Generate the code for the pickler.
      */
-    abstract void generateJavaSourceCode();
+    abstract void generateJavaSourceCode() throws UnableToCompleteException;
+
+    /**
+     * @param logger
+     * @param msg
+     * @throws UnableToCompleteException
+     */
+    protected void fail(TreeLogger logger, String msg) throws UnableToCompleteException
+    {
+        logger.log(TreeLogger.ERROR, msg);
+        throw new UnableToCompleteException();
+    }
 }

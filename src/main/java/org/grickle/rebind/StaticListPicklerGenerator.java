@@ -1,13 +1,15 @@
 package org.grickle.rebind;
 
+import com.google.gwt.core.ext.GeneratorContext;
+import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.typeinfo.JType;
 
 public class StaticListPicklerGenerator extends StaticPicklerGeneratorBase
 {
 
-    StaticListPicklerGenerator(StaticPicklerFactory factory, JType type)
+    StaticListPicklerGenerator(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
     {
-        super(factory, type);
+        super(logger, context, factory, type);
         // TODO Auto-generated constructor stub
     }
 

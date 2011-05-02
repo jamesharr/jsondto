@@ -54,19 +54,19 @@ public class StaticPicklerFactory
         StaticPicklerGenerator spg = null;
         if ( type.isArray() != null )
         {
-            // TODO
+            spg = new StaticArrayPicklerGenerator(logger, context, this, type);
         }
         else if ( type.isClass() != null )
         {
             JClassType classType = type.isClass();
             if ( isList(classType) )
-                ; // TODO - List
+                spg = new StaticListPicklerGenerator(logger, context, this, classType);
             else if ( isMap(classType) )
-                ;// TODO - Map
+                spg = new StaticMapPicklerGenerator(logger, context, this, classType);
             else if ( isList(classType) )
-                ; // TODO - Set
+                spg = new StaticSetPicklerGenerator(logger, context, this, classType);
             else if ( classType.getAnnotation(IsJSONSerializable.class) != null )
-                ; // TODO - Object
+                spg = new StaticObjectPicklerGenerator(logger, context, this, classType);
             else
             {
                 logger.log(TreeLogger.ERROR, "Not sure how to serialize" + qsn + ". Maybe mark @IsJSONSerializable?");
