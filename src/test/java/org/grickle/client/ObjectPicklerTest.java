@@ -11,14 +11,6 @@ import com.google.gwt.json.client.JSONString;
  */
 public class ObjectPicklerTest extends AbstractPicklerTest
 {
-    /* (non-Javadoc)
-     * @see com.google.gwt.junit.client.GWTTestCase#getModuleName()
-     */
-    @Override
-    public String getModuleName()
-    {
-        return "org.grickle.jsondtoJUnit";
-    }
 
     @IsJSONSerializable
     public static class Foo

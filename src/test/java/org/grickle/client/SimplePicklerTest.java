@@ -10,15 +10,6 @@ public class SimplePicklerTest extends AbstractPicklerTest
     interface StringPickler extends Pickler<String> {}
     interface IntegerPickler extends Pickler<Integer> {}
 
-    /* (non-Javadoc)
-     * @see com.google.gwt.junit.client.GWTTestCase#getModuleName()
-     */
-    @Override
-    public String getModuleName()
-    {
-        return "org.grickle.jsondtoJUnit";
-    }
-
     public void testStringPickler()
     {
         StringPickler p = GWT.create(StringPickler.class);
