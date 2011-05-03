@@ -57,6 +57,7 @@ public class ObjectPicklerTest extends AbstractPicklerTest
         FooPickler fooPickler = GWT.create(FooPickler.class);
         runTest(fooPickler, new Foo(100,100,"hello"));
         runTest(fooPickler, new Foo(100,null,null));
+        runTest(fooPickler, null);
     }
 
     @IsJSONSerializable
@@ -105,6 +106,7 @@ public class ObjectPicklerTest extends AbstractPicklerTest
         BarPickler p = GWT.create(BarPickler.class);
         // litmus test -- make sure normal pickling works fine.
         runTest(p, new Bar("James", 3, "asdf"));
+        runTest(p, null);
 
         // Real test
         JSONObject pickled = new JSONObject();
@@ -115,5 +117,65 @@ public class ObjectPicklerTest extends AbstractPicklerTest
         expectedRepickle.put("optional", new JSONNumber(42));
         expectedRepickle.put("ignoreNull", new JSONString("Some null-default value"));
         runTest(p, pickled, expectedRepickle);
+    }
+
+    @IsJSONSerializable
+    public static class Recursive
+    {
+        public String name;
+        public Recursive next;
+
+        public static Recursive create(String... names)
+        {
+            Recursive rv = null;
+            for(int i=names.length - 1; i>=0; i--)
+                rv = new Recursive(names[i], rv);
+            return rv;
+        }
+
+        Recursive()
+        {
+        }
+
+        public Recursive(String name, Recursive next)
+        {
+            this.name = name;
+            this.next = next;
+        }
+
+        public Recursive(String name, int optional, String ignoreNull)
+        {
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Recursive<"
+            + "name=" + name + ","
+            + "next=" + (next == null ? "null" : next) + ">";
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            return toString().equals(obj.toString());
+        }
+    }
+
+    public interface RecursivePickler extends Pickler<Recursive>{}
+
+    public void testRecursive()
+    {
+        RecursivePickler p = GWT.create(RecursivePickler.class);
+        runTest(p, Recursive.create("foo", "bar", "baz"));
+        runTest(p, null);
+
+        JSONObject inner = new JSONObject();
+        inner.put("name", new JSONString("bar"));
+        inner.put("next", JSONNull.getInstance());
+        JSONObject pickled = new JSONObject();
+        pickled.put("name", new JSONString("foo"));
+        pickled.put("next", inner);
+        runTest(p, pickled, p.pickle(Recursive.create("foo", "bar")));
     }
 }

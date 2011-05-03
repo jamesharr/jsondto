@@ -38,7 +38,6 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
         sanityCheck(logger);
 
         SourceWriter src = startClassFile(logger, type.getQualifiedSourceName());
-        createNullConstructor(logger, src);
         createPickleMethod(logger, src);
         createUnpickleMethod(logger, src);
         src.commit(logger);
@@ -67,15 +66,6 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
             fail(logger, "Type needs to have annotation @IsJSONSerializable");
     }
 
-    /**
-     * @param logger
-     * @param src
-     */
-    private void createNullConstructor(TreeLogger logger, SourceWriter src)
-    {
-        // TODO - a constructor that fails immediately
-    }
-
     private void createPickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
         logger.log(TreeLogger.DEBUG, "Creating pickle method");
@@ -83,6 +73,8 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
         src.println("public static " + JSONVALUE_CLS + " pickle(" + type.getQualifiedSourceName() + " obj)");
         src.println("{");
         src.indent();
+        src.println("if ( obj == null )");
+        src.indentln("return " + JSONNULL_CLS + ".getInstance();");
         src.println(JSONOBJECT_CLS + " rv = new " + JSONOBJECT_CLS + "();");
         for(JField f : classType.getFields())
         {
@@ -108,8 +100,11 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
         src.println("public static " + qsn + " unpickle(" + JSONVALUE_CLS + " jsonValue)");
         src.println("{");
         src.indent();
+        src.println( "if ( jsonValue == " + JSONNULL_CLS + ".getInstance() )");
+        src.indentln("return null;");
         src.println( JSONOBJECT_CLS + " jsonObject = jsonValue.isObject();");
-        src.println( "if ( jsonObject == null ) throw new RuntimeException();"); // TODO - better exception
+        src.println( "if ( jsonObject == null )" );
+        src.indentln( "throw new RuntimeException();" ); // TODO - better exception
         src.println( qsn + " rv = new " + qsn + "();");
         for(JField f : classType.getFields())
         {
