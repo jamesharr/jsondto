@@ -212,6 +212,11 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
             logger.log(TreeLogger.DEBUG, "Skipping final field " + f.getName());
             skip = true;
         }
+        else if ( f.isStatic() )
+        {
+            logger.log(TreeLogger.DEBUG, "Skipping static field " + f.getName());
+            skip = true;
+        }
         return skip;
     }
 }
