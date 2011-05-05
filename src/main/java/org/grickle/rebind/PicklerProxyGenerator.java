@@ -38,7 +38,7 @@ public class PicklerProxyGenerator
      */
     public String getImplName()
     {
-        return NameMangler.getPackageName(picklerIface) + "."
+        return NameMangler.getPicklerPackageName(picklerIface) + "."
         + NameMangler.getProxyImplName(picklerIface);
     }
 
@@ -50,7 +50,7 @@ public class PicklerProxyGenerator
     public void generate(TreeLogger logger) throws UnableToCompleteException
     {
         // Get supporting data
-        JClassType pickledType = getPickledType(logger, context.getTypeOracle());
+        JType pickledType = getPickledType(logger, context.getTypeOracle());
         SourceWriter src = getWriter(logger);
 
         // Get static-style pickler
@@ -73,7 +73,7 @@ public class PicklerProxyGenerator
 
     private SourceWriter getWriter(TreeLogger logger)
     {
-        String packageName = NameMangler.getPackageName(picklerIface);
+        String packageName = NameMangler.getPicklerPackageName(picklerIface);
         String picklerImplName = NameMangler.getProxyImplName(picklerIface);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
         composerFactory.addImplementedInterface(picklerIface.getQualifiedSourceName());
@@ -82,7 +82,7 @@ public class PicklerProxyGenerator
         return src;
     }
 
-    private JClassType getPickledType(TreeLogger logger, TypeOracle oracle) throws UnableToCompleteException
+    private JType getPickledType(TreeLogger logger, TypeOracle oracle) throws UnableToCompleteException
     {
         logger = logger.branch(TreeLogger.TRACE, "Checking pickler interface for " +
                 picklerIface.getQualifiedSourceName());
@@ -127,7 +127,7 @@ public class PicklerProxyGenerator
         if ( unpickleMethod.getParameters()[0].getType() != jsonValue )
             fail(logger, "unpickle doesn't take a JSONValue");
 
-        return pickleType.isClass();
+        return pickleType;
     }
 
     private void fail(TreeLogger logger, String msg) throws UnableToCompleteException

@@ -2,10 +2,14 @@ package org.grickle.rebind;
 
 import java.io.PrintWriter;
 
+import org.grickle.client.PickleException;
+import org.grickle.client.UnpickleException;
+
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JType;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
@@ -25,6 +29,9 @@ public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerat
     static final String JSONOBJECT_CLS = JSONObject.class.getName();
     static final String JSONVALUE_CLS = JSONValue.class.getName();
     static final String JSONNULL_CLS = JSONNull.class.getName();
+    static final String JSONARRAY_CLS = JSONArray.class.getName();
+    static final String UNPICKLE_EXCEPTION_CLS = UnpickleException.class.getName();
+    static final String PICKLE_EXCEPTION_CLS = PickleException.class.getName();
 
     private boolean isGenerated = false;
 
@@ -45,7 +52,7 @@ public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerat
     @Override
     final public String getPicklerClassName()
     {
-        return NameMangler.getPackageName(type) + "." + NameMangler.getPicklerName(type);
+        return NameMangler.getPicklerPackageName(type) + "." + NameMangler.getPicklerName(type);
     }
 
     @Override
@@ -61,7 +68,7 @@ public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerat
 
     final protected SourceWriter startClassFile(TreeLogger logger, String superClass)
     {
-        String packageName = NameMangler.getPackageName(type);
+        String packageName = NameMangler.getPicklerPackageName(type);
         String picklerImplName = NameMangler.getPicklerName(type);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
         if ( superClass != null )

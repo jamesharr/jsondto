@@ -104,7 +104,7 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
         src.indentln("return null;");
         src.println( JSONOBJECT_CLS + " jsonObject = jsonValue.isObject();");
         src.println( "if ( jsonObject == null )" );
-        src.indentln( "throw new RuntimeException();" ); // TODO - better exception
+        src.indentln( "throw new " + UNPICKLE_EXCEPTION_CLS + "(\"Expected Object, got something else\");" );
         src.println( qsn + " rv = new " + qsn + "();");
         for(JField f : classType.getFields())
         {
@@ -152,7 +152,8 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
         if ( f.isAnnotationPresent(Optional.class) )
             src.println("// @Optional");
         else
-            src.println("throw new RuntimeException();"); // TODO - Better Exception
+            src.println("throw new " + UNPICKLE_EXCEPTION_CLS + "(\"Key not present, but expected: "
+                    + f.getName() + "\");");
         src.outdent();
         src.println("}");
     }
@@ -181,7 +182,8 @@ public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
         if ( f.isAnnotationPresent(IgnoreNull.class))
             src.println("// @IgnoreNull");
         else if ( f.getType().isPrimitive() != null )
-            src.println("throw new RuntimeException();"); // TODO - Better exception
+            src.println("throw new " + UNPICKLE_EXCEPTION_CLS
+                    + "(\"Field expected to have value, but got null instead: " + f.getName() + "\");");
         else
             src.println("rv." + f.getName() + " = null;");
         src.outdent();

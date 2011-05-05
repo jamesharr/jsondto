@@ -48,6 +48,11 @@ public class NameMangler
         return rv;
     }
 
+    /**
+     * Get the package name for t
+     * @param t
+     * @return
+     */
     public static String getPackageName(JType t)
     {
         String rv = null;
@@ -59,6 +64,21 @@ public class NameMangler
             rv = t.isParameterized().getPackage().getName();
         else
             assert(false);
+        return rv;
+    }
+
+    /**
+     * Get the package name for a (static/proxy) pickler for t
+     * 
+     * @param t
+     * @return
+     */
+    public static String getPicklerPackageName(JType t)
+    {
+        String rv = getPackageName(t);
+        // HAX. FIX TODO - dedicate a package to "shit outside the GWT source directories"
+        if ( rv.startsWith("java.") )
+            rv = "org.grickle.client." + rv;
         return rv;
     }
 }

@@ -1,5 +1,7 @@
 package org.grickle.client.primitivepicklers;
 
+import org.grickle.client.UnpickleException;
+
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
@@ -23,7 +25,6 @@ public class StringPickler
         else if (nul == JSONNull.getInstance())
             return null;
         else
-            // TODO - throw something meaningful
-            throw new RuntimeException();
+            throw new UnpickleException("Cannot unpickle non-string as string");
     }
 }
