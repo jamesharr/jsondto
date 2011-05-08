@@ -1,23 +1,23 @@
 package org.grickle.rebind;
 
+import java.util.TreeSet;
+
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.typeinfo.JType;
 
-public class StaticSetPicklerGenerator extends StaticPicklerGeneratorBase
+public class StaticSetPicklerGenerator extends StaticCollectionPicklerGeneratorBase
 {
 
     StaticSetPicklerGenerator(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
     {
         super(logger, context, factory, type);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
-    void generateJavaSourceCode()
+    String getCollectionImplementation()
     {
-        // TODO Auto-generated method stub
-
+        return TreeSet.class.getName();
     }
 
 }

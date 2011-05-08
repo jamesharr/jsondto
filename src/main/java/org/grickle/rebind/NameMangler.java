@@ -37,7 +37,7 @@ public class NameMangler
     private static String mangle(JType t)
     {
         String package_name = getPackageName(t) + ".";
-        String rv = t.getQualifiedSourceName();
+        String rv = t.getParameterizedQualifiedSourceName();
         assert(rv.startsWith(package_name));
         rv = rv.substring(package_name.length());
         rv = rv.replace(",", COMMA);

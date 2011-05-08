@@ -1,6 +1,8 @@
 package org.grickle.rebind;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.grickle.client.IsJSONSerializable;
@@ -12,6 +14,7 @@ import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
+import com.google.gwt.core.ext.typeinfo.JParameterizedType;
 import com.google.gwt.core.ext.typeinfo.JType;
 
 /**
@@ -56,20 +59,29 @@ public class StaticPicklerFactory
         {
             spg = new StaticArrayPicklerGenerator(logger, context, this, type);
         }
+        else if ( type.isParameterized() != null )
+        {
+            JParameterizedType pType = type.isParameterized();
+            if ( isList(pType, context) )
+                spg = new StaticListPicklerGenerator(logger, context, this, pType);
+            else if ( isSet(pType, context) )
+                spg = new StaticSetPicklerGenerator(logger, context, this, pType);
+            else if ( isMap(type) )
+                spg = new StaticMapPicklerGenerator(logger, context, this, pType);
+            else
+            {
+                logger.log(TreeLogger.ERROR, "Not sure how to pickle" + qsn + ".");
+                throw new UnableToCompleteException();
+            }
+        }
         else if ( type.isClass() != null )
         {
             JClassType classType = type.isClass();
-            if ( isList(classType) )
-                spg = new StaticListPicklerGenerator(logger, context, this, classType);
-            else if ( isMap(classType) )
-                spg = new StaticMapPicklerGenerator(logger, context, this, classType);
-            else if ( isList(classType) )
-                spg = new StaticSetPicklerGenerator(logger, context, this, classType);
-            else if ( classType.getAnnotation(IsJSONSerializable.class) != null )
+            if ( classType.getAnnotation(IsJSONSerializable.class) != null )
                 spg = new StaticObjectPicklerGenerator(logger, context, this, classType);
             else
             {
-                logger.log(TreeLogger.ERROR, "Not sure how to serialize" + qsn + ". Maybe mark @IsJSONSerializable?");
+                logger.log(TreeLogger.ERROR, "Not sure how to pickle" + qsn + ". Maybe mark @IsJSONSerializable?");
                 throw new UnableToCompleteException();
             }
         }
@@ -95,15 +107,37 @@ public class StaticPicklerFactory
         return picklerImplName;
     }
 
-    private boolean isMap(JClassType classType)
+    private boolean isMap(JType type)
     {
         // TODO Auto-generated method stub
         return false;
     }
 
-    private boolean isList(JClassType classType)
+    private boolean isList(JClassType classType, GeneratorContext context)
     {
-        // TODO Auto-generated method stub
+        JType listType = context.getTypeOracle().findType(List.class.getName());
+        assert(listType != null);
+        JClassType listClass = listType.isInterface();
+        assert(listClass != null);
+
+        if ( classType.isAssignableTo(listClass))
+            return true;
+        return false;
+    }
+
+    /**
+     * @param classType
+     * @return
+     */
+    private boolean isSet(JClassType classType, GeneratorContext context)
+    {
+        JType listType = context.getTypeOracle().findType(Set.class.getName());
+        assert(listType != null);
+        JClassType listClass = listType.isInterface();
+        assert(listClass != null);
+
+        if ( classType.isAssignableTo(listClass))
+            return true;
         return false;
     }
 }
