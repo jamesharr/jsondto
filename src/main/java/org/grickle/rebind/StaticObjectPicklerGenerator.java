@@ -13,8 +13,29 @@ import com.google.gwt.core.ext.typeinfo.JField;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.user.rebind.SourceWriter;
 
-public class StaticObjectPicklerGenerator extends StaticPicklerGeneratorBase
+public class StaticObjectPicklerGenerator extends AbstractStaticPicklerGenerator
 {
+    public static class Factory implements StaticPicklerGenerator.Factory
+    {
+        @Override
+        public StaticPicklerGenerator getPickler(TreeLogger logger, GeneratorContext context,
+                StaticPicklerFactory factory, JType t) throws UnableToCompleteException {
+            String qsn = t.getParameterizedQualifiedSourceName();
+            JClassType classType = t.isClass();
+            if ( classType == null )
+                return null;
+            if ( classType.getAnnotation(IsJSONSerializable.class) != null )
+            {
+                return new StaticObjectPicklerGenerator(logger, context, factory, classType);
+            }
+            else
+            {
+                logger.log(TreeLogger.ERROR, "Not sure how to pickle " + qsn + ". Maybe mark as @IsJSONSerializable?");
+                throw new UnableToCompleteException();
+            }
+        }
+    }
+
     private JClassType classType;
 
     /**

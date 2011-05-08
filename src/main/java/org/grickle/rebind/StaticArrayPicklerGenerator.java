@@ -7,11 +7,23 @@ import com.google.gwt.core.ext.typeinfo.JArrayType;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.user.rebind.SourceWriter;
 
-public class StaticArrayPicklerGenerator extends StaticPicklerGeneratorBase
+public class StaticArrayPicklerGenerator extends AbstractStaticPicklerGenerator
 {
+    public static class Factory implements StaticPicklerGenerator.Factory
+    {
+        @Override
+        public StaticPicklerGenerator getPickler(TreeLogger logger, GeneratorContext context,
+                StaticPicklerFactory factory, JType t) throws UnableToCompleteException {
+            JArrayType array = t.isArray();
+            if ( array != null )
+                return new StaticArrayPicklerGenerator(logger, context, factory, array);
+            return null;
+        }
+    }
+
     JArrayType arrayType;
 
-    StaticArrayPicklerGenerator(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
+    StaticArrayPicklerGenerator(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JArrayType type)
     {
         super(logger, context, factory, type);
         arrayType = type.isArray();

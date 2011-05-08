@@ -9,7 +9,7 @@ import com.google.gwt.user.rebind.SourceWriter;
 /**
  * 
  */
-public abstract class StaticCollectionPicklerGeneratorBase extends StaticPicklerGeneratorBase
+public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractStaticPicklerGenerator
 {
 
     /**
@@ -18,7 +18,7 @@ public abstract class StaticCollectionPicklerGeneratorBase extends StaticPickler
      * @param factory
      * @param type
      */
-    public StaticCollectionPicklerGeneratorBase(TreeLogger logger, GeneratorContext context,
+    public AbstractStaticCollectionPicklerGenerator(TreeLogger logger, GeneratorContext context,
             StaticPicklerFactory factory, JType type)
     {
         super(logger, context, factory, type);

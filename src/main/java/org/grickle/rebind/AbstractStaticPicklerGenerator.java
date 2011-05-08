@@ -8,6 +8,7 @@ import org.grickle.client.UnpickleException;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
+import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
@@ -19,7 +20,7 @@ import com.google.gwt.user.rebind.SourceWriter;
 /**
  * Generate pickler
  */
-public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerator
+public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGenerator
 {
     StaticPicklerFactory factory;
     JType type;
@@ -35,7 +36,7 @@ public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerat
 
     private boolean isGenerated = false;
 
-    public StaticPicklerGeneratorBase(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
+    public AbstractStaticPicklerGenerator(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
     {
         this.context = context;
         this.logger = logger;
@@ -92,5 +93,24 @@ public abstract class StaticPicklerGeneratorBase implements StaticPicklerGenerat
     {
         logger.log(TreeLogger.ERROR, msg);
         throw new UnableToCompleteException();
+    }
+
+    /**
+     * Return true if 'cls' is assignable to 'cls'
+     * 
+     * @param cls
+     * @param assignable
+     * @return
+     */
+    protected static boolean isAssignable(GeneratorContext context, JClassType cls, Class<?> assignable)
+    {
+        JType assignableType = context.getTypeOracle().findType(assignable.getName());
+        assert(assignableType != null);
+        JClassType assignableClassType = assignableType.isInterface();
+        assert(assignableClassType != null);
+
+        if ( cls.isAssignableTo(assignableClassType))
+            return true;
+        return false;
     }
 }
