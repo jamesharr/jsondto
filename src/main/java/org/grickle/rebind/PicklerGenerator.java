@@ -2,53 +2,68 @@ package org.grickle.rebind;
 
 import java.io.PrintWriter;
 
+import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JMethod;
 import com.google.gwt.core.ext.typeinfo.JType;
+import com.google.gwt.core.ext.typeinfo.NotFoundException;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
 /**
- * Generates PicklerProxy implementation code.
- * 
- * This is wrapped by PicklerProxyGeneratorGWT purely for some state variable conveniences
+ * Generates front-end Pickler<T> implementation code.
  */
-public class PicklerProxyGenerator
+public class PicklerGenerator extends Generator
 {
     private static final String JSONVALUE_CLS = "com.google.gwt.json.client.JSONValue";
 
+    /*
+     * These private variables are convenient storage to avoid always passing types around
+     */
     private JClassType picklerIface;
     private GeneratorContext context;
 
-    public PicklerProxyGenerator(TreeLogger logger, GeneratorContext context, JType pickler) throws UnableToCompleteException
+    public PicklerGenerator()
     {
-        if ( pickler.isInterface() != null )
-            this.picklerIface = pickler.isInterface();
-        else
-            fail(logger, "Type is not an interface: " + pickler.getQualifiedSourceName());
-        this.context = context;
     }
 
-    /**
-     * Get the name of the implementation for this PicklerProxy
-     * 
-     * @return
-     */
-    public String getImplName()
+    private String getImplName()
     {
         return NameMangler.getPicklerPackageName(picklerIface) + "."
         + NameMangler.getProxyImplName(picklerIface);
     }
 
+    @Override
+    public String generate(TreeLogger logger, GeneratorContext context, String typeName)
+    throws UnableToCompleteException
+    {
+        this.context = context;
+        try
+        {
+            logger = logger.branch(TreeLogger.INFO, "Generating implementaiton for " + typeName);
+            JType type = context.getTypeOracle().getType(typeName);
+            picklerIface = type.isInterface();
+            if ( picklerIface == null )
+                fail(logger, "Type is not an interface: " + type.getParameterizedQualifiedSourceName());
+            generate(logger);
+            return getImplName();
+        } catch (NotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * Generate the implementation code for this PicklerProxy (unless it's been done already)
+     * 
      * @param logger
      * @throws UnableToCompleteException
      */
-    public void generate(TreeLogger logger) throws UnableToCompleteException
+    private void generate(TreeLogger logger) throws UnableToCompleteException
     {
         // Get supporting data
         JType pickledType = getPickledType(logger);
@@ -59,12 +74,12 @@ public class PicklerProxyGenerator
         String staticPickler = pf.getPickler(logger, context, pickledType);
 
         // Generate class
-        src.println("public " + JSONVALUE_CLS + " pickle(" + pickledType.getQualifiedSourceName() + " obj)");
+        src.println("public " + JSONVALUE_CLS + " pickle(" + pickledType.getParameterizedQualifiedSourceName() + " obj)");
         src.println("{");
         src.indentln("return " + staticPickler + ".pickle(obj);");
         src.println("}");
 
-        src.println("public " + pickledType.getQualifiedSourceName() + " unpickle(" + JSONVALUE_CLS + " json)");
+        src.println("public " + pickledType.getParameterizedQualifiedSourceName() + " unpickle(" + JSONVALUE_CLS + " json)");
         src.println("{");
         src.indentln("return " + staticPickler + ".unpickle(json);");
         src.println("}");
@@ -77,7 +92,7 @@ public class PicklerProxyGenerator
         String packageName = NameMangler.getPicklerPackageName(picklerIface);
         String picklerImplName = NameMangler.getProxyImplName(picklerIface);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
-        composerFactory.addImplementedInterface(picklerIface.getQualifiedSourceName());
+        composerFactory.addImplementedInterface(picklerIface.getParameterizedQualifiedSourceName());
         PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);
         SourceWriter src = composerFactory.createSourceWriter(context, printWriter);
         return src;
@@ -86,11 +101,11 @@ public class PicklerProxyGenerator
     private JType getPickledType(TreeLogger logger) throws UnableToCompleteException
     {
         logger = logger.branch(TreeLogger.TRACE, "Checking pickler interface for " +
-                picklerIface.getQualifiedSourceName());
+                picklerIface.getParameterizedQualifiedSourceName());
 
         // Make sure we're an interface
         if (picklerIface.isInterface() == null)
-            fail(logger, "Pickler '" + picklerIface.getQualifiedSourceName() + "' needs to be an interface.");
+            fail(logger, "Pickler '" + picklerIface.getParameterizedQualifiedSourceName() + "' needs to be an interface.");
 
         // Get the two methods we should have
         JMethod pickleMethod = null, unpickleMethod = null;
