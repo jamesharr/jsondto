@@ -8,12 +8,13 @@ import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JMethod;
 import com.google.gwt.core.ext.typeinfo.JType;
-import com.google.gwt.core.ext.typeinfo.TypeOracle;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
 /**
- * Generates PicklerProxy
+ * Generates PicklerProxy implementation code.
+ * 
+ * This is wrapped by PicklerProxyGeneratorGWT purely for some state variable conveniences
  */
 public class PicklerProxyGenerator
 {
@@ -50,7 +51,7 @@ public class PicklerProxyGenerator
     public void generate(TreeLogger logger) throws UnableToCompleteException
     {
         // Get supporting data
-        JType pickledType = getPickledType(logger, context.getTypeOracle());
+        JType pickledType = getPickledType(logger);
         SourceWriter src = getWriter(logger);
 
         // Get static-style pickler
@@ -82,7 +83,7 @@ public class PicklerProxyGenerator
         return src;
     }
 
-    private JType getPickledType(TreeLogger logger, TypeOracle oracle) throws UnableToCompleteException
+    private JType getPickledType(TreeLogger logger) throws UnableToCompleteException
     {
         logger = logger.branch(TreeLogger.TRACE, "Checking pickler interface for " +
                 picklerIface.getQualifiedSourceName());
@@ -105,7 +106,7 @@ public class PicklerProxyGenerator
         }
 
         // JSONValue type
-        JClassType jsonValue = oracle.findType(JSONVALUE_CLS);
+        JClassType jsonValue = context.getTypeOracle().findType(JSONVALUE_CLS);
         assert(jsonValue != null);
 
         // check pickle method signature
