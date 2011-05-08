@@ -25,37 +25,24 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
     }
 
     @Override
-    void generateJavaSourceCode() throws UnableToCompleteException
-    {
-        TreeLogger logger = this.logger.branch(TreeLogger.DEBUG, "Generating pickler for " + type.getQualifiedSourceName());
-        SourceWriter src = startClassFile(logger, null);
-        createPickleMethod(logger, src);
-        createUnpickleMethod(logger, src);
-        src.commit(logger);
-    }
-
-    private void createPickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
+    void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
         logger.log(TreeLogger.DEBUG, "Creating pickle method");
 
         JType itemType = getItemType();
         String itemPickler = factory.getPickler(logger, context, itemType);
 
-        src.println("public static " + JSONVALUE_CLS + " pickle(" + type.getParameterizedQualifiedSourceName() + " collection)");
-        src.println("{");
-        src.indent();
-        src.println("if ( collection == null )");
+        src.println("if ( obj == null )");
         src.indentln("return " + JSONNULL_CLS + ".getInstance();");
         src.println(JSONARRAY_CLS + " rv = new " + JSONARRAY_CLS + "();");
         src.println("int i=0;");
-        src.println("for (" + itemType.getQualifiedSourceName() + " item : collection)");
+        src.println("for (" + itemType.getQualifiedSourceName() + " item : obj)");
         src.indentln("rv.set(i++, " + itemPickler + ".pickle(item));");
         src.println("return rv;");
-        src.outdent();
-        src.println("}");
     }
 
-    private void createUnpickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
+    @Override
+    void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
         logger.log(TreeLogger.DEBUG, "Creating unpickle method");
 
@@ -63,12 +50,9 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
         String itemPickler = factory.getPickler(logger, context, itemType);
 
         String qsn = type.getParameterizedQualifiedSourceName();
-        src.println("public static " + qsn + " unpickle(" + JSONVALUE_CLS + " jsonValue)");
-        src.println("{");
-        src.indent();
-        src.println("if ( jsonValue == " + JSONNULL_CLS + ".getInstance() )");
+        src.println("if ( json == " + JSONNULL_CLS + ".getInstance() )");
         src.indentln("return null;");
-        src.println(JSONARRAY_CLS + " jsonArray = jsonValue.isArray();");
+        src.println(JSONARRAY_CLS + " jsonArray = json.isArray();");
         src.println("if ( jsonArray == null )" );
         src.indentln("throw new " + UNPICKLE_EXCEPTION_CLS + "(\"Excpected array/null in JSON.\");");
         src.println("int size = jsonArray.size();");
@@ -76,8 +60,6 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
         src.println("for ( int i=0; i<size; ++i )");
         src.indentln("rv.add(" + itemPickler + ".unpickle(jsonArray.get(i)) );");
         src.println("return rv;");
-        src.outdent();
-        src.println("}");
     }
 
     protected JType getItemType()

@@ -31,40 +31,22 @@ public class StaticArrayPicklerGenerator extends AbstractStaticPicklerGenerator
     }
 
     @Override
-    void generateJavaSourceCode() throws UnableToCompleteException
+    void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
-        TreeLogger logger = this.logger.branch(TreeLogger.DEBUG, "Generating pickler for " + type.getQualifiedSourceName());
-
-        SourceWriter src = startClassFile(logger, null);
-        createPickleMethod(logger, src);
-        createUnpickleMethod(logger, src);
-        src.commit(logger);
-    }
-
-    private void createPickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
-    {
-        logger.log(TreeLogger.DEBUG, "Creating pickle method");
-
         JType itemType = arrayType.getComponentType();
         String itemPickler = factory.getPickler(logger, context, itemType);
 
-        src.println("public static " + JSONVALUE_CLS + " pickle(" + type.getQualifiedSourceName() + " arr)");
-        src.println("{");
-        src.indent();
-        src.println("if ( arr == null )");
+        src.println("if ( obj == null )");
         src.indentln("return " + JSONNULL_CLS + ".getInstance();");
         src.println(JSONARRAY_CLS + " rv = new " + JSONARRAY_CLS + "();");
-        src.println("for (int i=0; i<arr.length; ++i)");
-        src.indentln("rv.set(i, " + itemPickler + ".pickle(arr[i]));");
+        src.println("for (int i=0; i<obj.length; ++i)");
+        src.indentln("rv.set(i, " + itemPickler + ".pickle(obj[i]));");
         src.println("return rv;");
-        src.outdent();
-        src.println("}");
     }
 
-    private void createUnpickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
+    @Override
+    void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
-        logger.log(TreeLogger.DEBUG, "Creating unpickle method");
-
         JType itemType = arrayType.getComponentType();
         String itemPickler = factory.getPickler(logger, context, itemType);
 
@@ -72,12 +54,9 @@ public class StaticArrayPicklerGenerator extends AbstractStaticPicklerGenerator
         String rootSubscriptFiller = getSubscriptFiller(arrayType);
 
         String qsn = arrayType.getQualifiedSourceName();
-        src.println("public static " + qsn + " unpickle(" + JSONVALUE_CLS + " jsonValue)");
-        src.println("{");
-        src.indent();
-        src.println("if ( jsonValue == " + JSONNULL_CLS + ".getInstance() )");
+        src.println("if ( json == " + JSONNULL_CLS + ".getInstance() )");
         src.indentln("return null;");
-        src.println(JSONARRAY_CLS + " jsonArray = jsonValue.isArray();");
+        src.println(JSONARRAY_CLS + " jsonArray = json.isArray();");
         src.println("if ( jsonArray == null )" );
         src.indentln("throw new " + UNPICKLE_EXCEPTION_CLS + "(\"Excpected array/null in JSON.\");");
         src.println("int size = jsonArray.size();");
@@ -85,8 +64,6 @@ public class StaticArrayPicklerGenerator extends AbstractStaticPicklerGenerator
         src.println("for ( int i=0; i<size; ++i )");
         src.indentln("rv[i] = " + itemPickler + ".unpickle(jsonArray.get(i));");
         src.println("return rv;");
-        src.outdent();
-        src.println("}");
     }
 
     /**

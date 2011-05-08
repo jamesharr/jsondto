@@ -4,6 +4,7 @@ import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JType;
+import com.google.gwt.user.rebind.SourceWriter;
 
 public class StaticMapPicklerGenerator extends AbstractStaticPicklerGenerator
 {
@@ -24,7 +25,14 @@ public class StaticMapPicklerGenerator extends AbstractStaticPicklerGenerator
     }
 
     @Override
-    void generateJavaSourceCode()
+    void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
         // TODO Auto-generated method stub
 

@@ -53,22 +53,17 @@ public class StaticObjectPicklerGenerator extends AbstractStaticPicklerGenerator
     }
 
     @Override
-    void generateJavaSourceCode() throws UnableToCompleteException
+    String getSuperClass()
     {
-        TreeLogger logger = this.logger.branch(TreeLogger.DEBUG, "Generating pickler for " + type.getQualifiedSourceName());
-        sanityCheck(logger);
-
-        SourceWriter src = startClassFile(logger, type.getQualifiedSourceName());
-        createPickleMethod(logger, src);
-        createUnpickleMethod(logger, src);
-        src.commit(logger);
+        return type.getParameterizedQualifiedSourceName();
     }
 
     /**
      * @throws UnableToCompleteException
      * 
      */
-    private void sanityCheck(TreeLogger logger) throws UnableToCompleteException
+    @Override
+    void sanityCheck(TreeLogger logger) throws UnableToCompleteException
     {
         logger = logger.branch(TreeLogger.DEBUG, "Performing type sanity check");
 
@@ -87,13 +82,9 @@ public class StaticObjectPicklerGenerator extends AbstractStaticPicklerGenerator
             fail(logger, "Type needs to have annotation @IsJSONSerializable");
     }
 
-    private void createPickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
+    @Override
+    void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
-        logger.log(TreeLogger.DEBUG, "Creating pickle method");
-
-        src.println("public static " + JSONVALUE_CLS + " pickle(" + type.getQualifiedSourceName() + " obj)");
-        src.println("{");
-        src.indent();
         src.println("if ( obj == null )");
         src.indentln("return " + JSONNULL_CLS + ".getInstance();");
         src.println(JSONOBJECT_CLS + " rv = new " + JSONOBJECT_CLS + "();");
@@ -108,22 +99,16 @@ public class StaticObjectPicklerGenerator extends AbstractStaticPicklerGenerator
             src.println("rv.put(\"" + name + "\", " + fieldPickler + ".pickle(obj." + name + "));");
         }
         src.println("return rv;");
-        src.outdent();
-        src.println("}");
 
     }
 
-    private void createUnpickleMethod(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
+    @Override
+    void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
-        logger.log(TreeLogger.DEBUG, "Creating unpickle method");
-
         String qsn = classType.getQualifiedSourceName();
-        src.println("public static " + qsn + " unpickle(" + JSONVALUE_CLS + " jsonValue)");
-        src.println("{");
-        src.indent();
-        src.println( "if ( jsonValue == " + JSONNULL_CLS + ".getInstance() )");
+        src.println( "if ( json == " + JSONNULL_CLS + ".getInstance() )");
         src.indentln("return null;");
-        src.println( JSONOBJECT_CLS + " jsonObject = jsonValue.isObject();");
+        src.println( JSONOBJECT_CLS + " jsonObject = json.isObject();");
         src.println( "if ( jsonObject == null )" );
         src.indentln( "throw new " + UNPICKLE_EXCEPTION_CLS + "(\"Expected Object, got something else\");" );
         src.println( qsn + " rv = new " + qsn + "();");
@@ -161,8 +146,6 @@ public class StaticObjectPicklerGenerator extends AbstractStaticPicklerGenerator
 
         // Done with pickler
         src.println("return rv;");
-        src.outdent();
-        src.println("}");
     }
 
     private void unpickle_keyNotPresent(SourceWriter src, JField f)

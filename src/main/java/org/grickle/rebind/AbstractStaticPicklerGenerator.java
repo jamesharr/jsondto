@@ -64,7 +64,32 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
 
         // Need to mark as generated first in case we have a recursive type.
         isGenerated = true;
-        generateJavaSourceCode();
+        generateJavaSourceCode(logger.branch(TreeLogger.DEBUG, "Generating pickler for " + type.getParameterizedQualifiedSourceName()));
+    }
+
+    final void generateJavaSourceCode(TreeLogger logger) throws UnableToCompleteException
+    {
+        sanityCheck(logger);
+        SourceWriter src = startClassFile(logger, getSuperClass());
+        String qsn = type.getParameterizedQualifiedSourceName();
+
+        logger.log(TreeLogger.DEBUG, "Creating pickle method");
+        src.println("public static " + JSONVALUE_CLS + " pickle(" + qsn + " obj)");
+        src.println("{");
+        src.indent();
+        writePickleBody(logger, src);
+        src.outdent();
+        src.println("}");
+
+        logger.log(TreeLogger.DEBUG, "Creating unpickle method");
+        src.println("public static " + qsn + " unpickle(" + JSONVALUE_CLS + " json)");
+        src.println("{");
+        src.indent();
+        writeUnpickleBody(logger, src);
+        src.outdent();
+        src.println("}");
+
+        src.commit(logger);
     }
 
     final protected SourceWriter startClassFile(TreeLogger logger, String superClass)
@@ -80,16 +105,11 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     }
 
     /**
-     * Generate the code for the pickler.
-     */
-    abstract void generateJavaSourceCode() throws UnableToCompleteException;
-
-    /**
      * @param logger
      * @param msg
      * @throws UnableToCompleteException
      */
-    protected void fail(TreeLogger logger, String msg) throws UnableToCompleteException
+    final void fail(TreeLogger logger, String msg) throws UnableToCompleteException
     {
         logger.log(TreeLogger.ERROR, msg);
         throw new UnableToCompleteException();
@@ -102,7 +122,7 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
      * @param assignable
      * @return
      */
-    protected static boolean isAssignable(GeneratorContext context, JClassType cls, Class<?> assignable)
+    final static boolean isAssignable(GeneratorContext context, JClassType cls, Class<?> assignable)
     {
         JType assignableType = context.getTypeOracle().findType(assignable.getName());
         assert(assignableType != null);
@@ -113,4 +133,22 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
             return true;
         return false;
     }
+
+    /**
+     * Perform an option sanity check before code generation is performed
+     * 
+     * @param logger
+     * @throws UnableToCompleteException
+     */
+    void sanityCheck(TreeLogger logger) throws UnableToCompleteException
+    {
+
+    }
+
+    String getSuperClass()
+    {
+        return null;
+    }
+    abstract void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException;
+    abstract void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException;
 }
