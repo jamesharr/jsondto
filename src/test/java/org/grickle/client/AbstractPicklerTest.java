@@ -1,5 +1,6 @@
 package org.grickle.client;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,13 +33,38 @@ public abstract class AbstractPicklerTest extends GWTTestCase
     }
 
     /**
-     * Test pickling, then unpickling.
+     * Test pickle then unpickle.
      * 
      * @param <T>
      * @param pickler
      * @param value
      */
-    public <T> void runTest(Pickler<T> pickler, T value)
+    public <T> void runPUTest(Pickler<T> pickler, T value)
+    {
+        Comparator<T> cmp = new Comparator<T>(){
+            @Override
+            public int compare(T a, T b)
+            {
+                if ( a == null && b == null )
+                    return 0;
+                if ( a != null && a.equals(b) )
+                    return 0;
+                return 1;
+            }
+        };
+
+        runPUTest(pickler, value, cmp);
+    }
+
+    /**
+     * Test pickle, then unpickle with a comparator.
+     * 
+     * @param <T>
+     * @param pickler
+     * @param value
+     * @param cmp
+     */
+    <T> void runPUTest(Pickler<T> pickler, T value, Comparator<T> cmp)
     {
         System.out.println("=== Pickling with " + pickler.getClass().getName() + " ===");
         System.out.println(" original: " + value);
@@ -49,17 +75,17 @@ public abstract class AbstractPicklerTest extends GWTTestCase
         T unpickled = pickler.unpickle(pickled);
         System.out.println(" unpickled: " + unpickled);
 
-        assertEquals(value, unpickled);
+        assertTrue( cmp.compare(value, unpickled) == 0 );
     }
 
     /**
-     * Just test unpickling
+     * Test unpickle, then pickle
      * 
      * @param <T>
      * @param p
      * @param string
      */
-    protected <T> void runTest(Pickler<T> pickler, JSONValue pickled, JSONValue expectedRepickle)
+    protected <T> void runUPTest(Pickler<T> pickler, JSONValue pickled, JSONValue expectedRepickle)
     {
         System.out.println("=== Unpickling with " + pickler.getClass().getName() + " ===");
         System.out.println(" original json: " + pickled);

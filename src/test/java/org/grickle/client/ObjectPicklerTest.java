@@ -55,9 +55,9 @@ public class ObjectPicklerTest extends AbstractPicklerTest
     public void testFooPickler()
     {
         FooPickler fooPickler = GWT.create(FooPickler.class);
-        runTest(fooPickler, new Foo(100,100,"hello"));
-        runTest(fooPickler, new Foo(100,null,null));
-        runTest(fooPickler, null);
+        runPUTest(fooPickler, new Foo(100,100,"hello"));
+        runPUTest(fooPickler, new Foo(100,null,null));
+        runPUTest(fooPickler, null);
     }
 
     @IsJSONSerializable
@@ -105,8 +105,8 @@ public class ObjectPicklerTest extends AbstractPicklerTest
     {
         BarPickler p = GWT.create(BarPickler.class);
         // litmus test -- make sure normal pickling works fine.
-        runTest(p, new Bar("James", 3, "asdf"));
-        runTest(p, null);
+        runPUTest(p, new Bar("James", 3, "asdf"));
+        runPUTest(p, null);
 
         // Real test
         JSONObject pickled = new JSONObject();
@@ -116,7 +116,7 @@ public class ObjectPicklerTest extends AbstractPicklerTest
         expectedRepickle.put("name", new JSONString("James"));
         expectedRepickle.put("optional", new JSONNumber(42));
         expectedRepickle.put("ignoreNull", new JSONString("Some null-default value"));
-        runTest(p, pickled, expectedRepickle);
+        runUPTest(p, pickled, expectedRepickle);
     }
 
     @IsJSONSerializable
@@ -167,8 +167,8 @@ public class ObjectPicklerTest extends AbstractPicklerTest
     public void testRecursive()
     {
         RecursivePickler p = GWT.create(RecursivePickler.class);
-        runTest(p, Recursive.create("foo", "bar", "baz"));
-        runTest(p, null);
+        runPUTest(p, Recursive.create("foo", "bar", "baz"));
+        runPUTest(p, null);
 
         JSONObject inner = new JSONObject();
         inner.put("name", new JSONString("bar"));
@@ -176,6 +176,6 @@ public class ObjectPicklerTest extends AbstractPicklerTest
         JSONObject pickled = new JSONObject();
         pickled.put("name", new JSONString("foo"));
         pickled.put("next", inner);
-        runTest(p, pickled, p.pickle(Recursive.create("foo", "bar")));
+        runUPTest(p, pickled, p.pickle(Recursive.create("foo", "bar")));
     }
 }

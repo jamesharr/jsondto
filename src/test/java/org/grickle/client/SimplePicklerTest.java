@@ -13,17 +13,17 @@ public class SimplePicklerTest extends AbstractPicklerTest
     public void testStringPickler()
     {
         StringPickler p = GWT.create(StringPickler.class);
-        runTest(p, "Hello world");
-        runTest(p, "");
-        runTest(p, null);
+        runPUTest(p, "Hello world");
+        runPUTest(p, "");
+        runPUTest(p, null);
     }
 
     public void testIntegerPickler()
     {
         IntegerPickler p = GWT.create(IntegerPickler.class);
-        runTest(p, 123);
-        runTest(p, 0);
-        runTest(p, -100000);
-        runTest(p, null);
+        runPUTest(p, 123);
+        runPUTest(p, 0);
+        runPUTest(p, -100000);
+        runPUTest(p, null);
     }
 }
