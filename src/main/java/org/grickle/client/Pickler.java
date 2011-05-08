@@ -3,11 +3,10 @@ package org.grickle.client;
 import com.google.gwt.json.client.JSONValue;
 
 /**
- * Wraps the real pickler code in a class that's usable by the user.
+ * Wraps the real pickler code in a class that's usable by the user directly.
  * 
- * This is mainly for tests. These aren't used by the JSONRemoteService generator
- * because sometimes we need to pickle/unpickle primitives like integers, which we can't
- * do with generics.
+ * This is mainly for writing code tests, but could be used to pickle data
+ * outside of normal RPC calls.
  */
 public interface Pickler<T>
 {

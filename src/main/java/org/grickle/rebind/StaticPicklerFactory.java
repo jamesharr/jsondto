@@ -16,7 +16,7 @@ import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JType;
 
 /**
- * Singleton used to get a static class for pickling and unpickling.
+ * Singleton used to get a static pickle/unpickle implementation.
  */
 public class StaticPicklerFactory
 {

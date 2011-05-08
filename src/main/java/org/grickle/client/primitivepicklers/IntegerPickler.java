@@ -7,6 +7,11 @@ import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
+/**
+ * Boxed int pickler.
+ * 
+ * Note - This class attempts to parse a number if it's a string.
+ */
 public class IntegerPickler
 {
     public static JSONValue pickle(Integer val)

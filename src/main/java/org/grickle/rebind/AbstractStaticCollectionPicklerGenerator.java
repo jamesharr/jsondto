@@ -7,7 +7,7 @@ import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.user.rebind.SourceWriter;
 
 /**
- * 
+ * Array & Set collections share a lot. This is a common place for that code
  */
 public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractStaticPicklerGenerator
 {
@@ -27,8 +27,6 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
     @Override
     void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
-        logger.log(TreeLogger.DEBUG, "Creating pickle method");
-
         JType itemType = getItemType();
         String itemPickler = factory.getPickler(logger, context, itemType);
 
@@ -44,8 +42,6 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
     @Override
     void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException
     {
-        logger.log(TreeLogger.DEBUG, "Creating unpickle method");
-
         JType itemType = getItemType();
         String itemPickler = factory.getPickler(logger, context, itemType);
 
@@ -62,6 +58,11 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
         src.println("return rv;");
     }
 
+    /**
+     * Get the parameter in the generic.
+     * 
+     * @return
+     */
     protected JType getItemType()
     {
         JType[] rv = type.isParameterized().getTypeArgs();
@@ -69,5 +70,10 @@ public abstract class AbstractStaticCollectionPicklerGenerator extends AbstractS
         return rv[0];
     }
 
+    /**
+     * Get a real implementation for the interface we'll be returning
+     * 
+     * @return
+     */
     abstract String getCollectionImplementation();
 }

@@ -18,7 +18,8 @@ import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
 /**
- * Generate pickler
+ * Abstract base class for pickler generators
+ * 
  */
 public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGenerator
 {
@@ -45,17 +46,16 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     }
 
     @Override
-    final public JType getPicklerType()
-    {
-        return type;
-    }
-
-    @Override
     final public String getPicklerClassName()
     {
-        return NameMangler.getPicklerPackageName(type) + "." + NameMangler.getPicklerName(type);
+        return NameMangler.getPicklerPackageName(type) + "." + NameMangler.getStaticPicklerImplName(type);
     }
 
+    /**
+     * Generate the static class for pickling and unpickling.
+     * 
+     * Note - this will only generate the class if it hasn't been generated yet.
+     */
     @Override
     final public void generate() throws UnableToCompleteException
     {
@@ -70,6 +70,7 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     final void generateJavaSourceCode(TreeLogger logger) throws UnableToCompleteException
     {
         sanityCheck(logger);
+
         SourceWriter src = startClassFile(logger, getSuperClass());
         String qsn = type.getParameterizedQualifiedSourceName();
 
@@ -92,10 +93,17 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
         src.commit(logger);
     }
 
-    final protected SourceWriter startClassFile(TreeLogger logger, String superClass)
+    /**
+     * Start a new implementation class file.
+     * 
+     * @param logger
+     * @param superClass Class to inherit from, can be null.
+     * @return
+     */
+    final SourceWriter startClassFile(TreeLogger logger, String superClass)
     {
         String packageName = NameMangler.getPicklerPackageName(type);
-        String picklerImplName = NameMangler.getPicklerName(type);
+        String picklerImplName = NameMangler.getStaticPicklerImplName(type);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
         if ( superClass != null )
             composerFactory.setSuperclass(superClass);
@@ -105,6 +113,8 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     }
 
     /**
+     * Log a message and throw an UnableToCompleteException
+     * 
      * @param logger
      * @param msg
      * @throws UnableToCompleteException
@@ -116,7 +126,7 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     }
 
     /**
-     * Return true if 'cls' is assignable to 'cls'
+     * Return true if 'cls' is assignable to 'assignable'
      * 
      * @param cls
      * @param assignable
@@ -135,7 +145,7 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     }
 
     /**
-     * Perform an option sanity check before code generation is performed
+     * Override this to perform a sanity check on a type before starting code generation
      * 
      * @param logger
      * @throws UnableToCompleteException
@@ -145,10 +155,31 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
 
     }
 
+    /**
+     * Override this to set a class to inherit from when creating the implementation source code.
+     * 
+     * @return
+     */
     String getSuperClass()
     {
         return null;
     }
+
+    /**
+     * Override this to generate the body of the 'pickle' static method. The object is passed in as 'obj'.
+     * 
+     * @param logger
+     * @param src
+     * @throws UnableToCompleteException
+     */
     abstract void writePickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException;
+
+    /**
+     * Override this to generate the body of the 'unpickle' static method. The JSONObject is passed in as 'json'.
+     *
+     * @param logger
+     * @param src
+     * @throws UnableToCompleteException
+     */
     abstract void writeUnpickleBody(TreeLogger logger, SourceWriter src) throws UnableToCompleteException;
 }

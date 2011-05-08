@@ -33,7 +33,7 @@ public class PicklerGenerator extends Generator
     private String getImplName()
     {
         return NameMangler.getPicklerPackageName(picklerIface) + "."
-        + NameMangler.getProxyImplName(picklerIface);
+        + NameMangler.getPicklerImplName(picklerIface);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class PicklerGenerator extends Generator
     private SourceWriter getWriter(TreeLogger logger)
     {
         String packageName = NameMangler.getPicklerPackageName(picklerIface);
-        String picklerImplName = NameMangler.getProxyImplName(picklerIface);
+        String picklerImplName = NameMangler.getPicklerImplName(picklerIface);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
         composerFactory.addImplementedInterface(picklerIface.getParameterizedQualifiedSourceName());
         PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);

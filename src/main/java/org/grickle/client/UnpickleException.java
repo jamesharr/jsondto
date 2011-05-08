@@ -1,5 +1,8 @@
 package org.grickle.client;
 
+/**
+ * Generic unpickle exception with a message.
+ */
 public class UnpickleException extends RuntimeException
 {
     public UnpickleException(String msg)

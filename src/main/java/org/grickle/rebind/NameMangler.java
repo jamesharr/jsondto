@@ -3,10 +3,13 @@ package org.grickle.rebind;
 import com.google.gwt.core.ext.typeinfo.JType;
 
 
+/**
+ * Used to mangle names for unique implementation classes.
+ */
 public class NameMangler
 {
+    private static final String STATIC_PICKLER = "__STATIC_PICKLER";
     private static final String PICKLER = "__PICKLER";
-    private static final String PROXY_PICKLER = "__PROXY_PICKLER";
     private static final String COMMA = "_COMMA_";
     private static final String GT = "_GT_";
     private static final String LT = "_LT_";
@@ -14,26 +17,36 @@ public class NameMangler
     private static final String ARRAY = "_ARRAY_";
 
     /**
+     * Get the name of the implementation class. This implements Pickler<T>.
+     * 
      * Note - does not return with package name
      * 
      * @param t
      * @return
      */
-    public static String getProxyImplName(JType t)
-    {
-        return mangle(t) + PROXY_PICKLER;
-    }
-
-    /**
-     * Note - does not return with package name
-     * @param t
-     * @return
-     */
-    public static String getPicklerName(JType t)
+    public static String getPicklerImplName(JType t)
     {
         return mangle(t) + PICKLER;
     }
 
+    /**
+     * Get the name of the static implementation class. This is static and implements no interface.
+     * 
+     * Note - does not return with package name
+     * @param t
+     * @return
+     */
+    public static String getStaticPicklerImplName(JType t)
+    {
+        return mangle(t) + STATIC_PICKLER;
+    }
+
+    /**
+     * Mangle a JType's class name (not the package name)
+     * 
+     * @param t
+     * @return
+     */
     private static String mangle(JType t)
     {
         String package_name = getPackageName(t) + ".";
@@ -50,6 +63,7 @@ public class NameMangler
 
     /**
      * Get the package name for t
+     * 
      * @param t
      * @return
      */
