@@ -5,7 +5,6 @@ package org.grickle.client;
  * 
  * Big TODO item
  */
-public interface JSONRemoteService
+public interface JSONRPCService
 {
-
 }
