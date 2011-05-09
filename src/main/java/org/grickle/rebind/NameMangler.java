@@ -53,6 +53,7 @@ public class NameMangler
         String rv = t.getParameterizedQualifiedSourceName();
         assert(rv.startsWith(package_name));
         rv = rv.substring(package_name.length());
+        rv = rv.replace(" ", "");
         rv = rv.replace(",", COMMA);
         rv = rv.replace("<", LT);
         rv = rv.replace(">", GT);
