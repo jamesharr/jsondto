@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.grickle</groupId>
   <artifactId>jsondto</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>org.grickle.jsondto</name>
   
@@ -140,6 +140,17 @@
       </plugin>
       
     </plugins>
+
+    <!-- include source in package -->
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.java</include>
+          <include>**/*.gwt.xml</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 </project>
 
