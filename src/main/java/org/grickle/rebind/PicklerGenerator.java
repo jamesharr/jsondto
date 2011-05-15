@@ -2,7 +2,6 @@ package org.grickle.rebind;
 
 import java.io.PrintWriter;
 
-import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
@@ -16,7 +15,7 @@ import com.google.gwt.user.rebind.SourceWriter;
 /**
  * Generates front-end Pickler<T> implementation code.
  */
-public class PicklerGenerator extends Generator
+public class PicklerGenerator
 {
     private static final String JSONVALUE_CLS = "com.google.gwt.json.client.JSONValue";
 
@@ -25,36 +24,28 @@ public class PicklerGenerator extends Generator
      */
     private JClassType picklerIface;
     private GeneratorContext context;
+    private JType type;
 
-    public PicklerGenerator()
+    public PicklerGenerator(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException
     {
-    }
-
-    private String getImplName()
-    {
-        return NameMangler.getPicklerPackageName(picklerIface) + "."
-        + NameMangler.getPicklerImplName(picklerIface);
-    }
-
-    @Override
-    public String generate(TreeLogger logger, GeneratorContext context, String typeName)
-    throws UnableToCompleteException
-    {
-        this.context = context;
         try
         {
-            logger = logger.branch(TreeLogger.INFO, "Generating implementaiton for " + typeName);
-            JType type = context.getTypeOracle().getType(typeName);
+            this.context = context;
+            type = context.getTypeOracle().getType(typeName);
             picklerIface = type.isInterface();
             if ( picklerIface == null )
                 fail(logger, "Type is not an interface: " + type.getParameterizedQualifiedSourceName());
-            generate(logger);
-            return getImplName();
-        } catch (NotFoundException e)
-        {
-            e.printStackTrace();
         }
-        return null;
+        catch (NotFoundException e)
+        {
+            fail(logger, "Strangely unable to find type " + typeName);
+        }
+    }
+
+    public String getImplName()
+    {
+        return NameMangler.getPicklerPackageName(picklerIface) + "."
+        + NameMangler.getPicklerImplName(picklerIface);
     }
 
     /**
@@ -63,7 +54,7 @@ public class PicklerGenerator extends Generator
      * @param logger
      * @throws UnableToCompleteException
      */
-    private void generate(TreeLogger logger) throws UnableToCompleteException
+    public void generate(TreeLogger logger) throws UnableToCompleteException
     {
         // Get supporting data
         JType pickledType = getPickledType(logger);
@@ -93,6 +84,7 @@ public class PicklerGenerator extends Generator
         String picklerImplName = NameMangler.getPicklerImplName(picklerIface);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(packageName, picklerImplName);
         composerFactory.addImplementedInterface(picklerIface.getParameterizedQualifiedSourceName());
+        logger.log(TreeLogger.DEBUG, "Creating class " + packageName + "." + picklerImplName);
         PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);
         SourceWriter src = composerFactory.createSourceWriter(context, printWriter);
         return src;
