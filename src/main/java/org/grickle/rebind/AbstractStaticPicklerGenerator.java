@@ -35,8 +35,6 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     static final String UNPICKLE_EXCEPTION_CLS = UnpickleException.class.getName();
     static final String PICKLE_EXCEPTION_CLS = PickleException.class.getName();
 
-    private boolean isGenerated = false;
-
     public AbstractStaticPicklerGenerator(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory, JType type)
     {
         this.context = context;
@@ -59,11 +57,7 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
     @Override
     final public void generate() throws UnableToCompleteException
     {
-        if ( isGenerated )
-            return;
-
         // Need to mark as generated first in case we have a recursive type.
-        isGenerated = true;
         generateJavaSourceCode(logger.branch(TreeLogger.DEBUG, "Generating pickler for " + type.getParameterizedQualifiedSourceName()));
     }
 
@@ -72,6 +66,12 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
         sanityCheck(logger);
 
         SourceWriter src = startClassFile(logger, getSuperClass());
+        if ( src == null )
+        {
+            logger.log(TreeLogger.TRACE, "Class already exists");
+            return;
+        }
+
         String qsn = type.getParameterizedQualifiedSourceName();
 
         logger.log(TreeLogger.DEBUG, "Creating pickle method");
@@ -98,7 +98,7 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
      * 
      * @param logger
      * @param superClass Class to inherit from, can be null.
-     * @return
+     * @return SourceWriter or null if class already exists
      */
     final SourceWriter startClassFile(TreeLogger logger, String superClass)
     {
@@ -108,6 +108,8 @@ public abstract class AbstractStaticPicklerGenerator implements StaticPicklerGen
         if ( superClass != null )
             composerFactory.setSuperclass(superClass);
         PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);
+        if ( printWriter == null )
+            return null;
         SourceWriter src = composerFactory.createSourceWriter(context, printWriter);
         return src;
     }

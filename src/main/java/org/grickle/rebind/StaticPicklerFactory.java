@@ -54,9 +54,9 @@ public class StaticPicklerFactory
 
     private StaticPicklerFactory()
     {
-        picklerImpls.put("int", IntPickler.class.getName());
-        picklerImpls.put(Integer.class.getName(), IntegerPickler.class.getName());
-        picklerImpls.put(String.class.getName(), StringPickler.class.getName());
+        prebuilt.put("int", IntPickler.class.getName());
+        prebuilt.put(Integer.class.getName(), IntegerPickler.class.getName());
+        prebuilt.put(String.class.getName(), StringPickler.class.getName());
 
         picklerFactories.add(new StaticArrayPicklerGenerator.Factory());
         picklerFactories.add(new StaticListPicklerGenerator.Factory());
@@ -71,7 +71,7 @@ public class StaticPicklerFactory
         picklerFactories.add(new FailFactory());
     }
 
-    Map<String,String> picklerImpls = new TreeMap<String,String>();
+    Map<String,String> prebuilt = new TreeMap<String,String>();
     List<Factory> picklerFactories = new LinkedList<Factory>();
 
     /**
@@ -85,8 +85,8 @@ public class StaticPicklerFactory
     {
         // This needs to be first to handle recursive objects
         String qsn = type.getParameterizedQualifiedSourceName();
-        if ( picklerImpls.containsKey(qsn) )
-            return picklerImpls.get(qsn);
+        if ( prebuilt.containsKey(qsn) )
+            return prebuilt.get(qsn);
 
         // See who can implement it
         StaticPicklerGenerator spg = null;
@@ -97,12 +97,10 @@ public class StaticPicklerFactory
                 break;
         }
 
-        // Save mapping first, then generate code (recursive objects)
-        String picklerImplName = spg.getPicklerClassName();
-        picklerImpls.put(qsn, picklerImplName);
+        // Generate it
         spg.generate();
 
         // Done
-        return picklerImplName;
+        return spg.getPicklerClassName();
     }
 }

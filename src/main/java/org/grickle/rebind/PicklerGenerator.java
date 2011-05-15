@@ -25,20 +25,23 @@ public class PicklerGenerator
     private JClassType picklerIface;
     private GeneratorContext context;
     private JType type;
+    private TreeLogger logger;
 
     public PicklerGenerator(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException
     {
+        this.context = context;
+        this.logger = logger;
         try
         {
-            this.context = context;
             type = context.getTypeOracle().getType(typeName);
             picklerIface = type.isInterface();
             if ( picklerIface == null )
-                fail(logger, "Type is not an interface: " + type.getParameterizedQualifiedSourceName());
+                fail("Type is not an interface: " + type.getParameterizedQualifiedSourceName());
+            generate();
         }
         catch (NotFoundException e)
         {
-            fail(logger, "Strangely unable to find type " + typeName);
+            fail("Strangely unable to find type " + typeName);
         }
     }
 
@@ -54,11 +57,16 @@ public class PicklerGenerator
      * @param logger
      * @throws UnableToCompleteException
      */
-    public void generate(TreeLogger logger) throws UnableToCompleteException
+    private void generate() throws UnableToCompleteException
     {
         // Get supporting data
-        JType pickledType = getPickledType(logger);
-        SourceWriter src = getWriter(logger);
+        JType pickledType = getPickledType();
+        SourceWriter src = getWriter();
+        if ( src == null )
+        {
+            logger.log(TreeLogger.TRACE, "Class already exists");
+            return;
+        }
 
         // Get static-style pickler
         StaticPicklerFactory pf = StaticPicklerFactory.getInstance();
@@ -78,7 +86,7 @@ public class PicklerGenerator
         src.commit(logger);
     }
 
-    private SourceWriter getWriter(TreeLogger logger)
+    private SourceWriter getWriter()
     {
         String packageName = NameMangler.getPicklerPackageName(picklerIface);
         String picklerImplName = NameMangler.getPicklerImplName(picklerIface);
@@ -86,18 +94,20 @@ public class PicklerGenerator
         composerFactory.addImplementedInterface(picklerIface.getParameterizedQualifiedSourceName());
         logger.log(TreeLogger.DEBUG, "Creating class " + packageName + "." + picklerImplName);
         PrintWriter printWriter = context.tryCreate(logger, packageName, picklerImplName);
+        if ( printWriter == null )
+            return  null;
         SourceWriter src = composerFactory.createSourceWriter(context, printWriter);
         return src;
     }
 
-    private JType getPickledType(TreeLogger logger) throws UnableToCompleteException
+    private JType getPickledType() throws UnableToCompleteException
     {
         logger = logger.branch(TreeLogger.TRACE, "Checking pickler interface for " +
                 picklerIface.getParameterizedQualifiedSourceName());
 
         // Make sure we're an interface
         if (picklerIface.isInterface() == null)
-            fail(logger, "Pickler '" + picklerIface.getParameterizedQualifiedSourceName() + "' needs to be an interface.");
+            fail("Pickler '" + picklerIface.getParameterizedQualifiedSourceName() + "' needs to be an interface.");
 
         // Get the two methods we should have
         JMethod pickleMethod = null, unpickleMethod = null;
@@ -109,7 +119,7 @@ public class PicklerGenerator
             else if ( m.getName().equals("unpickle") )
                 unpickleMethod = m;
             else
-                fail(logger, "Unknown method signature in pickler.");
+                fail("Unknown method signature in pickler.");
         }
 
         // JSONValue type
@@ -118,27 +128,27 @@ public class PicklerGenerator
 
         // check pickle method signature
         if ( pickleMethod == null )
-            fail(logger, "Could not find pickler method");
+            fail("Could not find pickler method");
         if ( pickleMethod.getReturnType() != jsonValue )
-            fail(logger, "Return type on pickler method was not a JSONValue");
+            fail("Return type on pickler method was not a JSONValue");
         if ( pickleMethod.getParameters().length != 1 )
-            fail(logger, "pickle() arguments were invalid");
+            fail("pickle() arguments were invalid");
         JType pickleType = pickleMethod.getParameters()[0].getType();
 
         // check unpickle method signature.
         if ( unpickleMethod == null )
-            fail(logger, "Could not find unpickle method");
+            fail("Could not find unpickle method");
         if ( unpickleMethod.getReturnType() != pickleType )
-            fail(logger, "Unpickle doesn't return our pickle type.");
+            fail("Unpickle doesn't return our pickle type.");
         if ( unpickleMethod.getParameters().length != 1 )
-            fail(logger, "unpickle() argument count is invalid");
+            fail("unpickle() argument count is invalid");
         if ( unpickleMethod.getParameters()[0].getType() != jsonValue )
-            fail(logger, "unpickle doesn't take a JSONValue");
+            fail("unpickle doesn't take a JSONValue");
 
         return pickleType;
     }
 
-    private void fail(TreeLogger logger, String msg) throws UnableToCompleteException
+    private void fail(String msg) throws UnableToCompleteException
     {
         logger.log(TreeLogger.ERROR, msg);
         throw new UnableToCompleteException();
