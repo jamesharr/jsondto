@@ -28,30 +28,6 @@ public class StaticPicklerFactory
         return instance;
     }
 
-    private static final class FailFactory implements Factory
-    {
-        @Override
-        public StaticPicklerGenerator getPickler(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory,
-                JType t) throws UnableToCompleteException {
-            String qsn = t.getParameterizedQualifiedSourceName();
-            logger.log(TreeLogger.ERROR, "Don't know how to pickle " + qsn + ".");
-            throw new UnableToCompleteException();
-        }
-    }
-
-    private static final class PrimitiveFailFactory implements Factory
-    {
-        @Override
-        public StaticPicklerGenerator getPickler(TreeLogger logger, GeneratorContext context, StaticPicklerFactory factory,
-                JType t) throws UnableToCompleteException {
-            if ( t.isPrimitive() == null )
-                return null;
-            String qsn = t.getParameterizedQualifiedSourceName();
-            logger.log(TreeLogger.ERROR, "Primitive type " + qsn + " isn't supported yet.");
-            throw new UnableToCompleteException();
-        }
-    }
-
     private StaticPicklerFactory()
     {
         prebuilt.put("int", IntPickler.class.getName());
@@ -63,19 +39,13 @@ public class StaticPicklerFactory
         picklerFactories.add(new StaticSetPicklerGenerator.Factory());
         picklerFactories.add(new StaticMapPicklerGenerator.Factory());
         picklerFactories.add(new StaticObjectPicklerGenerator.Factory());
-
-        // Stub to throw an error for primitives we don't already have an implementation for
-        picklerFactories.add(new PrimitiveFailFactory());
-
-        // Factory that is guaranteed to as our last fall back
-        picklerFactories.add(new FailFactory());
     }
 
     Map<String,String> prebuilt = new TreeMap<String,String>();
     List<Factory> picklerFactories = new LinkedList<Factory>();
 
     /**
-     * Get a pickler for a particular type. Generate if need be.
+     * Generate a pickler implementation for type.
      * 
      * @param type
      * @return
@@ -95,6 +65,16 @@ public class StaticPicklerFactory
             spg = f.getPickler(logger, context, this, type);
             if ( spg != null )
                 break;
+        }
+
+        // Didn't find anything
+        if ( spg == null )
+        {
+            if ( type.isPrimitive() != null )
+                logger.log(TreeLogger.ERROR, "Don't know how to pickle primitive " + qsn + " (yet).");
+            else
+                logger.log(TreeLogger.ERROR, "Don't know how to pickle " + qsn + ".");
+            throw new UnableToCompleteException();
         }
 
         // Generate it

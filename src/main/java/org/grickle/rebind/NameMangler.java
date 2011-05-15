@@ -8,6 +8,7 @@ import com.google.gwt.core.ext.typeinfo.JType;
  */
 public class NameMangler
 {
+    private static final String DEFAULT_PACKAGE = "org.grickle.client";
     private static final String STATIC_PICKLER = "__STATIC_PICKLER";
     private static final String PICKLER = "__PICKLER";
     private static final String COMMA = "_COMMA_";
@@ -91,12 +92,12 @@ public class NameMangler
     public static String getPicklerPackageName(JType t)
     {
         String rv = getPackageName(t);
+
         // Needed for arrays of primitive types.
         if ( rv == null )
-            rv = "org.grickle.client";
-        // HAX. FIX TODO - dedicate a package to "shit outside the GWT source directories"
+            rv = DEFAULT_PACKAGE;
         if ( rv.startsWith("java.") )
-            rv = "org.grickle.client." + rv;
+            rv = DEFAULT_PACKAGE + "." + rv;
         return rv;
     }
 }
