@@ -91,6 +91,9 @@ public class NameMangler
     public static String getPicklerPackageName(JType t)
     {
         String rv = getPackageName(t);
+        // Needed for arrays of primitive types.
+        if ( rv == null )
+            rv = "org.grickle.client";
         // HAX. FIX TODO - dedicate a package to "shit outside the GWT source directories"
         if ( rv.startsWith("java.") )
             rv = "org.grickle.client." + rv;
