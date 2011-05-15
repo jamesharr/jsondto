@@ -9,6 +9,8 @@ import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JMethod;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.NotFoundException;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
@@ -17,7 +19,9 @@ import com.google.gwt.user.rebind.SourceWriter;
  */
 public class PicklerGenerator
 {
-    private static final String JSONVALUE_CLS = "com.google.gwt.json.client.JSONValue";
+    private static final String JSONVALUE_CLS = JSONValue.class.getName();
+    private static final String JSONPARSER_CLS = JSONParser.class.getName();
+    private static final String STRING_CLS = String.class.getName();
 
     /*
      * These private variables are convenient storage to avoid always passing types around
@@ -72,15 +76,28 @@ public class PicklerGenerator
         StaticPicklerFactory pf = StaticPicklerFactory.getInstance();
         String staticPickler = pf.getPickler(logger, context, pickledType);
 
-        // Generate class
+        // Generate pickle method
         src.println("public " + JSONVALUE_CLS + " pickle(" + pickledType.getParameterizedQualifiedSourceName() + " obj)");
         src.println("{");
         src.indentln("return " + staticPickler + ".pickle(obj);");
         src.println("}");
 
+        // Generate unpickle method
         src.println("public " + pickledType.getParameterizedQualifiedSourceName() + " unpickle(" + JSONVALUE_CLS + " json)");
         src.println("{");
         src.indentln("return " + staticPickler + ".unpickle(json);");
+        src.println("}");
+
+        // Generate shortcut unpickler
+        src.println("public " + pickledType.getParameterizedQualifiedSourceName() + " unpickle(" + STRING_CLS + " str)");
+        src.println("{");
+        src.indentln("return unpickle(" + JSONPARSER_CLS + ".parseStrict(str));");
+        src.println("}");
+
+        // Generate pickle method
+        src.println("public " + STRING_CLS + " pickleToString(" + pickledType.getParameterizedQualifiedSourceName() + " obj)");
+        src.println("{");
+        src.indentln("return pickle(obj).toString();");
         src.println("}");
 
         src.commit(logger);
@@ -109,17 +126,12 @@ public class PicklerGenerator
         if (picklerIface.isInterface() == null)
             fail("Pickler '" + picklerIface.getParameterizedQualifiedSourceName() + "' needs to be an interface.");
 
-        // Get the two methods we should have
-        JMethod pickleMethod = null, unpickleMethod = null;
+        JMethod pickleMethod = null;
         for (JMethod m : picklerIface.getOverridableMethods())
         {
             logger.log(TreeLogger.DEBUG, "Found method:" + m.getReadableDeclaration());
             if ( m.getName().equals("pickle") )
                 pickleMethod = m;
-            else if ( m.getName().equals("unpickle") )
-                unpickleMethod = m;
-            else
-                fail("Unknown method signature in pickler.");
         }
 
         // JSONValue type
@@ -134,16 +146,6 @@ public class PicklerGenerator
         if ( pickleMethod.getParameters().length != 1 )
             fail("pickle() arguments were invalid");
         JType pickleType = pickleMethod.getParameters()[0].getType();
-
-        // check unpickle method signature.
-        if ( unpickleMethod == null )
-            fail("Could not find unpickle method");
-        if ( unpickleMethod.getReturnType() != pickleType )
-            fail("Unpickle doesn't return our pickle type.");
-        if ( unpickleMethod.getParameters().length != 1 )
-            fail("unpickle() argument count is invalid");
-        if ( unpickleMethod.getParameters()[0].getType() != jsonValue )
-            fail("unpickle doesn't take a JSONValue");
 
         return pickleType;
     }
