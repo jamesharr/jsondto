@@ -15,7 +15,7 @@ public class PicklerGeneratorGWT extends Generator
     @Override
     public String generate(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException
     {
-        logger = logger.branch(TreeLogger.INFO, "Generating implementaiton for " + typeName);
+        logger = logger.branch(TreeLogger.TRACE, "Generating implementaiton for " + typeName);
         PicklerGenerator generator = new PicklerGenerator(logger, context, typeName);
         return generator.getImplName();
     }

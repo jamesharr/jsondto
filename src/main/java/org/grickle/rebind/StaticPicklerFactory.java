@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.grickle.client.primitivepicklers.BoolPickler;
 import org.grickle.client.primitivepicklers.IntPickler;
 import org.grickle.client.primitivepicklers.IntegerPickler;
 import org.grickle.client.primitivepicklers.StringPickler;
@@ -31,6 +32,7 @@ public class StaticPicklerFactory
     private StaticPicklerFactory()
     {
         prebuilt.put("int", IntPickler.class.getName());
+        prebuilt.put("boolean", BoolPickler.class.getName());
         prebuilt.put(Integer.class.getName(), IntegerPickler.class.getName());
         prebuilt.put(String.class.getName(), StringPickler.class.getName());
 

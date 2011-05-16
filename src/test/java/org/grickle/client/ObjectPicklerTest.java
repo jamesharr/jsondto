@@ -17,6 +17,7 @@ public class ObjectPicklerTest extends AbstractPicklerTest
     {
         public int i1;
         Integer i2;
+        boolean b = true;
         protected String s1;
         transient String trans = "radio7";
         final int finalAnswer = 42;
@@ -25,11 +26,12 @@ public class ObjectPicklerTest extends AbstractPicklerTest
         {
         }
 
-        public Foo(int i1, Integer i2, String s1)
+        public Foo(int i1, Integer i2, String s1, boolean b)
         {
             this.i1 = i1;
             this.i2 = i2;
             this.s1 = s1;
+            this.b = b;
         }
 
         @Override
@@ -39,6 +41,7 @@ public class ObjectPicklerTest extends AbstractPicklerTest
             + "i1=" + i1 + ","
             + "i2=" + i2 + ","
             + "s1=" + s1 + ","
+            + "b=" + b + ","
             + "trans=" + trans + ","
             + "finalAnswer=" + finalAnswer + ">";
         }
@@ -55,8 +58,8 @@ public class ObjectPicklerTest extends AbstractPicklerTest
     public void testFooPickler()
     {
         FooPickler fooPickler = GWT.create(FooPickler.class);
-        runPUTest(fooPickler, new Foo(100,100,"hello"));
-        runPUTest(fooPickler, new Foo(100,null,null));
+        runPUTest(fooPickler, new Foo(100,100,"hello", true));
+        runPUTest(fooPickler, new Foo(100,null,null, false));
         runPUTest(fooPickler, null);
     }
 
