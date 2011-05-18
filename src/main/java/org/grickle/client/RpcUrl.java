@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  *   url() + classShortName + "." + methodName
  */
 @Target(value=ElementType.TYPE)
-public @interface RPCPostURL
+public @interface RpcUrl
 {
     /**
      * URL to use for the RPC call
@@ -35,10 +35,13 @@ public @interface RPCPostURL
     boolean devProxy() default false;
 
     /**
-     * Whether or not to use the class name in the RPC call. The class name used is the short version
-     * of the java interface.
-     * 
-     * @return
+     * Request method type. Defaults to POST, which puts raw JSON
+     * inside the POST body.
      */
-    boolean useClassName() default true;
+    RpcRequestType requestMethod() default RpcRequestType.POST;
+
+    /**
+     * How to map the RPC method name to the JSON method name.
+     */
+    RpcMethodMap methodMapping() default RpcMethodMap.SHORT_CLASS;
 }

@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * Several syntactic use cases
  */
-@RPCPostURL(URL="../remote.php/", devURL="http://localhost/~jharr/php/remote.php", devProxy=true)
-public interface UseCaseSet1 extends JSONRPCService
+@RpcUrl(URL="../remote.php/", devURL="http://localhost/~jharr/php/remote.php", devProxy=true)
+public interface UseCaseSet1 extends JsonRpcService
 {
     // If a method is a fire-and-forget method, we shouldn't require an async callback
     void nullMethod();

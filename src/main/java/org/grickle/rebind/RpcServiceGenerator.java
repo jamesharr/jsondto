@@ -8,7 +8,7 @@ import com.google.gwt.core.ext.UnableToCompleteException;
 /**
  * Generates an implementation of JSONRemoteService class.
  */
-public class JSONRemoteServiceGenerator extends Generator
+public class RpcServiceGenerator extends Generator
 {
     @Override
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)

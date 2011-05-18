@@ -9,4 +9,7 @@
   <generate-with class="org.grickle.rebind.PicklerGeneratorGWT">
     <when-type-assignable class="org.grickle.client.Pickler"/>
   </generate-with>
+  <generate-with class="org.grickle.rebind.RpcServiceGenerator">
+    <when-type-assignable class="org.grickle.client.JsonRpcService"/>
+  </generate-with>
 </module>
