@@ -10,29 +10,28 @@ import java.lang.annotation.Target;
  *   url() + classShortName + "." + methodName
  */
 @Target(value=ElementType.TYPE)
-public @interface RpcUrl
+public @interface RpcEndpoint
 {
     /**
      * URL to use for the RPC call
+     * 
+     * This URL is relative to GWT.getModuleBaseURL() unless it begins with a "/", "http://", or "https://"
+     * 
      * @return
      */
     String URL();
 
     /**
      * URL to use for the RPC call in development mode. If left default, then it is the same
-     * as the URL parameter
+     * as the URL parameter. This can be used to specify a URL using the included proxy servlet.
+     * 
+     * This URL is relative to GWT.getModuleBaseURL() unless it begins with a "/", "http://", or "https://"
+     * 
+     * TODO - bug me about a proxy example
      * 
      * @return
      */
     String devURL() default "";
-
-    /**
-     * Whether or not to proxy development RPC calls to avoid browser cross-domain request
-     * restrictions. Defaults to false.
-     * 
-     * @return
-     */
-    boolean devProxy() default false;
 
     /**
      * Request method type. Defaults to POST, which puts raw JSON

@@ -11,11 +11,25 @@ public class NameMangler
     private static final String DEFAULT_PACKAGE = "org.grickle.client";
     private static final String STATIC_PICKLER = "__STATIC_PICKLER";
     private static final String PICKLER = "__PICKLER";
+    private static final String SERVICE_IMPL = "__SERVICE_IMPL";
     private static final String COMMA = "_COMMA_";
     private static final String GT = "_GT_";
     private static final String LT = "_LT_";
     private static final String DOT = "_DOT_";
     private static final String ARRAY = "_ARRAY_";
+
+    /**
+     * Get the name of the implementation class for a service.
+     * 
+     * Note - doe snot return with package name.
+     * 
+     * @param t
+     * @return
+     */
+    public static String getServiceImplName(JType t)
+    {
+        return mangle(t) + SERVICE_IMPL;
+    }
 
     /**
      * Get the name of the implementation class. This implements Pickler<T>.
