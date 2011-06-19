@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='org.grickle.jsondto.jsondto'/>
+
+  <!-- Specify the path to any remote services.                   -->
+  <inherits name="com.google.gwt.junit.JUnit"/>
+  
+  <source path='test'/>
+
+</module>

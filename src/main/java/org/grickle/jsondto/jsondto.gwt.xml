@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='jsondto'>
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name="com.google.gwt.json.JSON"/>
+  
+  <source path='client'/>
+  <source path='shared'/>
+  <source path='generated'/>
+  
+  <generate-with class="org.grickle.jsondto.rebind.PicklerGeneratorGWT">
+    <when-type-assignable class="org.grickle.jsondto.client.Pickler"/>
+  </generate-with>
+  <generate-with class="org.grickle.jsondto.rebind.JsonRpcServiceGenerator">
+    <when-type-assignable class="org.grickle.jsondto.client.JsonRpcService"/>
+  </generate-with>
+</module>
