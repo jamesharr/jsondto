@@ -18,7 +18,7 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.classpathProvider"/>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.grickle.jsondtotest.test.jsondtoTest"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.grickle.jsondtotest.client.jsondtoTest"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jsondto"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.sourcepathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dgwt.args=&quot;-prod -standardsMode -logLevel WARN -out www-test&quot; -Xmx256M"/>

@@ -1,4 +1,4 @@
-package org.grickle.jsondtotest.test;
+package org.grickle.jsondtotest.client;
 
 import org.grickle.jsondto.client.IgnoreNull;
 import org.grickle.jsondto.client.IsJSONSerializable;

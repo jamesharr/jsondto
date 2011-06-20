@@ -6,6 +6,6 @@
   <!-- Specify the path to any remote services.                   -->
   <inherits name="com.google.gwt.junit.JUnit"/>
   
-  <source path='test'/>
+  <source path='client'/>
 
 </module>

@@ -1,4 +1,4 @@
-package org.grickle.jsondtotest.test;
+package org.grickle.jsondtotest.client;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package org.grickle.jsondtotest.test;
+package org.grickle.jsondtotest.client;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;

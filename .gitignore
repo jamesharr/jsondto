@@ -5,5 +5,5 @@
 *.swp
 target/
 war/
-src/main/webapp/WEB-INF/deploy/
-src/main/webapp/jsondto/
+src/test/webapp/WEB-INF/deploy/
+src/test/webapp/jsondto/

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+  <!--
+  Sample servlet config for testing.
+  <servlet>
+    <servlet-name>fooServlet</servlet-name>
+    <servlet-class>org.grickle.jsondtotest.server.FooServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>fooServlet</servlet-name>
+    <url-pattern>/fooServlet</url-pattern>
+  </servlet-mapping>
+  -->
+</web-app>
