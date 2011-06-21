@@ -11,7 +11,7 @@ import com.google.gwt.core.client.GWT;
 /**
  * 
  */
-public class MapPicklerTest extends AbstractPicklerTest
+public class MapPicklerTest extends AbstractGWTTest
 {
     @IsJSONSerializable
     public static class Foo

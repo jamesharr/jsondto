@@ -7,7 +7,7 @@ import com.google.gwt.core.client.GWT;
 /**
  * 
  */
-public class SimplePicklerTest extends AbstractPicklerTest
+public class SimplePicklerTest extends AbstractGWTTest
 {
     interface StringPickler extends Pickler<String> {}
     interface IntegerPickler extends Pickler<Integer> {}

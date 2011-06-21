@@ -9,6 +9,8 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNull;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -39,7 +41,7 @@ public class RpcHTTPUtil
         throw new RuntimeException("Not implemented yet. What are you doing here anyway?");
     }
 
-    public static void get_urlencode(String url, String devUrl, String method, JSONArray params, final AsyncCallback<JSONValue> cb)
+    public static void get_urlencoded(String url, String devUrl, String method, JSONArray params, final AsyncCallback<JSONValue> cb)
     {
         String requestUrl = chooseUrl(url,devUrl)
         + "?method=" + URL.encodeQueryString(method)
@@ -84,7 +86,18 @@ public class RpcHTTPUtil
                     {
                         try {
                             JSONValue jsv = JSONParser.parseStrict(response.getText());
-                            cb.onSuccess(jsv);
+                            JSONObject obj = jsv.isObject();
+                            if ( obj != null )
+                            {
+                                if ( obj.containsKey("error") && obj.get("error").isNull() != JSONNull.getInstance() )
+                                    cb.onFailure(new Exception("JSON Error: " + obj.get("error").toString()));
+                                else if ( obj.containsKey("result"))
+                                    cb.onSuccess(obj.get("result"));
+                            }
+                            else
+                            {
+                                cb.onFailure(new Exception("Malformed JSON Response."));
+                            }
                         }
                         catch(Exception e)
                         {

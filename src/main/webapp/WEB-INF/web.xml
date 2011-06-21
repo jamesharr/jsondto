@@ -4,16 +4,12 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-
-  <!--
-  Sample servlet config for testing.
   <servlet>
-    <servlet-name>fooServlet</servlet-name>
-    <servlet-class>org.grickle.jsondtotest.server.FooServlet</servlet-class>
+    <servlet-name>echoServlet</servlet-name>
+    <servlet-class>org.grickle.jsondtotest.servlets.EchoParametersServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>fooServlet</servlet-name>
-    <url-pattern>/fooServlet</url-pattern>
+    <servlet-name>echoServlet</servlet-name>
+    <url-pattern>/echoParams</url-pattern>
   </servlet-mapping>
-  -->
 </web-app>

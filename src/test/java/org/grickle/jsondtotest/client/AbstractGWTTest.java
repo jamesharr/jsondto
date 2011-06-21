@@ -17,13 +17,13 @@ import com.google.gwt.junit.client.GWTTestCase;
 /**
  * 
  */
-public abstract class AbstractPicklerTest extends GWTTestCase
+public abstract class AbstractGWTTest extends GWTTestCase
 {
 
     /**
      * 
      */
-    public AbstractPicklerTest()
+    public AbstractGWTTest()
     {
         super();
     }

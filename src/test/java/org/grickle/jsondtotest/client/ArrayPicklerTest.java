@@ -10,7 +10,7 @@ import com.google.gwt.core.client.GWT;
 /**
  * 
  */
-public class ArrayPicklerTest extends AbstractPicklerTest
+public class ArrayPicklerTest extends AbstractGWTTest
 {
     @IsJSONSerializable
     static class MyObject

@@ -8,7 +8,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
-public class TestUtilTest extends AbstractPicklerTest
+public class TestUtilTest extends AbstractGWTTest
 {
 
     /**

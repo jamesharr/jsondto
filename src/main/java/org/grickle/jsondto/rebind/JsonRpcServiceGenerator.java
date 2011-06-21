@@ -71,7 +71,7 @@ public class JsonRpcServiceGenerator extends Generator
     private SourceWriter getWriter(TreeLogger logger, GeneratorContext context, JClassType serviceIface)
     {
         String pkg = NameMangler.getPicklerPackageName(serviceIface);
-        String implName = NameMangler.getPicklerImplName(serviceIface);
+        String implName = NameMangler.getServiceImplName(serviceIface);
         ClassSourceFileComposerFactory composerFactory = new ClassSourceFileComposerFactory(pkg, implName);
         composerFactory.addImplementedInterface(serviceIface.getParameterizedQualifiedSourceName());
         logger.log(TreeLogger.DEBUG, "Creating class " + pkg + "." + implName);
@@ -101,6 +101,8 @@ public class JsonRpcServiceGenerator extends Generator
         if ( src == null )
             return;
 
+        writeUrlMembers(logger, src, bindAnnotation);
+
         for(JMethod m : svcIface.getMethods())
         {
             String methodName = m.getName();
@@ -116,8 +118,27 @@ public class JsonRpcServiceGenerator extends Generator
             writeHTTPCall(logger, context, src, rpcMethodName, bindAnnotation, returnType);
             src.outdent();
             src.println("}");
+            src.println("");
         }
         src.commit(logger);
+    }
+
+    /**
+     * @param logger
+     * @param src
+     * @param bindAnnotation
+     */
+    private void writeUrlMembers(TreeLogger logger, SourceWriter src, RpcEndpoint bindAnnotation)
+    {
+        String url = bindAnnotation.URL();
+        String devUrl = bindAnnotation.devURL();
+        if ( devUrl.equals("") )
+            devUrl = url;
+        src.println("// Production URL");
+        src.println("static String url = \"" + url + "\";");
+        src.println("// Dev URL");
+        src.println("static String devUrl = \"" + devUrl + "\";");
+        src.println("");
     }
 
     private String getRpcMethodName(TreeLogger logger, JClassType svcIface, JMethod m, RpcEndpoint bindAnnotation) throws UnableToCompleteException
@@ -190,7 +211,7 @@ public class JsonRpcServiceGenerator extends Generator
     private void writeMethodPrototype(TreeLogger logger, SourceWriter src, String methodName,
             JParameter[] parameters, JType returnType)
     {
-        src.println("void " + methodName + "(");
+        src.println("public void " + methodName + "(");
         src.indent();
 
         // Arguments as arg0, arg1, arg2, etc
@@ -231,14 +252,23 @@ public class JsonRpcServiceGenerator extends Generator
         String method = getHTTPUtilMethodName(logger, url.requestMethod());
         String pickler = StaticPicklerFactory.getInstance().getPickler(logger, context, returnType);
 
-        src.println(RpcHTTPUtil.class.getName() + "." + method + "(" + ", ");
-        src.println("new " + ASYNC_CALLBACK + "<" + JSONVALUE + "(){");
+        src.println(RpcHTTPUtil.class.getName() + "." + method + "(");
+        src.indent();
+        src.println("url,");
+        src.println("devUrl,");
+        src.println("\"" + rpcMethodName + "\",");
+        src.println("args,");
+        src.println("new " + ASYNC_CALLBACK + "<" + JSONVALUE + ">(){");
         src.indent();
 
         // Success case
         src.println("public void onSuccess(" + JSONVALUE + " json) {");
-        src.indentln("try { callback.onSuccess(" + pickler + ".unpickle(json); }");
-        src.indentln("catch(Exception e){callback.onFailure(e);}");
+        src.indent();
+        src.println("try {");
+        src.println("callback.onSuccess(" + pickler + ".unpickle(json));");
+        src.println("}");
+        src.print("catch(Exception e){callback.onFailure(e);}");
+        src.outdent();
         src.println("}");
 
         // Failure case
@@ -248,6 +278,7 @@ public class JsonRpcServiceGenerator extends Generator
 
         src.outdent();
         src.println("});");
+        src.outdent();
     }
 
     private String getHTTPUtilMethodName(TreeLogger logger, RpcRequestType type) throws UnableToCompleteException

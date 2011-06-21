@@ -13,7 +13,7 @@ import com.google.gwt.core.client.GWT;
 /**
  * 
  */
-public class CollectionPicklerTest extends AbstractPicklerTest
+public class CollectionPicklerTest extends AbstractGWTTest
 {
     public interface StringListPickler extends Pickler<List<String>> { }
     public interface StringSetPickler extends Pickler<Set<String>> { }

@@ -14,7 +14,7 @@ import com.google.gwt.json.client.JSONString;
 /**
  * 
  */
-public class ObjectPicklerTest extends AbstractPicklerTest
+public class ObjectPicklerTest extends AbstractGWTTest
 {
 
     @IsJSONSerializable
