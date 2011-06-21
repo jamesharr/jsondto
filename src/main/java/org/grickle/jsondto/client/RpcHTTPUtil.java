@@ -70,6 +70,9 @@ public class RpcHTTPUtil
         RequestBuilder rb = new RequestBuilder(method, requestUrl);
         rb.setHeader("Content-Type", "application/json-rpc");
         rb.setHeader("Accept", "application/json-rpc");
+
+        // TODO - simplify the nesting with a convenience function or two
+        // TODO - handle exceptions thrown by onFailure()?
         try
         {
             rb.sendRequest(data, new RequestCallback(){
@@ -89,14 +92,17 @@ public class RpcHTTPUtil
                             JSONObject obj = jsv.isObject();
                             if ( obj != null )
                             {
-                                if ( obj.containsKey("error") && obj.get("error").isNull() != JSONNull.getInstance() )
-                                    cb.onFailure(new Exception("JSON Error: " + obj.get("error").toString()));
+                                JSONValue error = obj.get("error");
+                                if ( error != null && error != JSONNull.getInstance() )
+                                    cb.onFailure(new ServerSideException(error));
                                 else if ( obj.containsKey("result"))
                                     cb.onSuccess(obj.get("result"));
+                                else
+                                    cb.onFailure(new MalformedJSONException(error));
                             }
                             else
                             {
-                                cb.onFailure(new Exception("Malformed JSON Response."));
+                                cb.onFailure(new MalformedJSONException(jsv));
                             }
                         }
                         catch(Exception e)

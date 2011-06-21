@@ -12,4 +12,13 @@
     <servlet-name>echoServlet</servlet-name>
     <url-pattern>/echoParams</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>errorServlet</servlet-name>
+    <servlet-class>org.grickle.jsondtotest.servlets.ErrorServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>errorServlet</servlet-name>
+    <url-pattern>/errorServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

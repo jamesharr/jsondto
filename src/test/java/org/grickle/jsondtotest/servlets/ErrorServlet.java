@@ -1,6 +1,8 @@
 package org.grickle.jsondtotest.servlets;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -9,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 
+ * Servlet that just returns an error
  */
-public class EchoParametersServlet extends HttpServlet
+public class ErrorServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
 
@@ -22,11 +24,10 @@ public class EchoParametersServlet extends HttpServlet
         ServletOutputStream out = resp.getOutputStream();
         String id = req.getParameter("id");
         String params = req.getParameter("params");
-        params = params.replace("\"", "\\\"");
-        out.print("{"
-                +"\"error\":null,"
-                +"\"id\":" + id + ","
-                +"\"result\":\"" + params + "\""
-                +"}");
+        Matcher m = Pattern.compile("\\[\"(.*)\"\\]").matcher(params);
+        if ( m.matches() )
+            out.print("{\"id\":" + id + ",\"error\":\""+m.group(1)+"\"}");
+        else
+            out.print("FAIL THIS TEST");
     }
 }

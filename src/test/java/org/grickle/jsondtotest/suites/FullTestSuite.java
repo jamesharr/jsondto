@@ -7,6 +7,7 @@ import org.grickle.jsondtotest.client.ArrayPicklerTest;
 import org.grickle.jsondtotest.client.CollectionPicklerTest;
 import org.grickle.jsondtotest.client.MapPicklerTest;
 import org.grickle.jsondtotest.client.ObjectPicklerTest;
+import org.grickle.jsondtotest.client.RpcTest;
 import org.grickle.jsondtotest.client.SimplePicklerTest;
 import org.grickle.jsondtotest.client.TestUtilTest;
 
@@ -26,6 +27,7 @@ public class FullTestSuite extends GWTTestSuite
         suite.addTestSuite(CollectionPicklerTest.class);
         suite.addTestSuite(MapPicklerTest.class);
         suite.addTestSuite(ObjectPicklerTest.class);
+        suite.addTestSuite(RpcTest.class);
         return suite;
     }
 }
