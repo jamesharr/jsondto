@@ -8,16 +8,18 @@ import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
-public class BoolPickler
+public class BooleanPickler
 {
-    public static JSONValue pickle(boolean val)
+    public static JSONValue pickle(Boolean val)
     {
+        if ( val == null )
+            return JSONNull.getInstance();
         return JSONBoolean.getInstance(val);
     }
 
-    public static boolean unpickle(JSONValue val)
+    public static Boolean unpickle(JSONValue val)
     {
-        boolean rv;
+        Boolean rv;
 
         JSONBoolean bool = val.isBoolean();
         JSONString str = val.isString();
@@ -27,12 +29,12 @@ public class BoolPickler
             rv = bool.booleanValue();
         else if (str != null)
             rv = Boolean.parseBoolean(str.stringValue());
-        else if (num != null )
-            rv = new Boolean(num.doubleValue() != 0.0 );
-        else if ( jNull != null || val == null )
-            throw new UnpickleException("Attempt to unpickle null into a boolean");
+        else if (num != null)
+            rv = new Boolean(num.doubleValue() != 0.0);
+        else if (jNull != null || val == null)
+            rv = null;
         else
-            throw new UnpickleException("Attempt to unpickle unsupported type into a boolean: " + val);
+            throw new UnpickleException("Attempt to unpickle unsupported type into a Boolean: " + val);
 
         return rv;
     }

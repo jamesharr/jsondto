@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
  */
 public class SimplePicklerTest extends AbstractGWTTest
 {
+    interface BooleanPickler extends Pickler<Boolean> {}
     interface StringPickler extends Pickler<String> {}
     interface IntegerPickler extends Pickler<Integer> {}
 
@@ -26,6 +27,14 @@ public class SimplePicklerTest extends AbstractGWTTest
         runPUTest(p, 123);
         runPUTest(p, 0);
         runPUTest(p, -100000);
+        runPUTest(p, null);
+    }
+
+    public void testBooleanPickler()
+    {
+        BooleanPickler p = GWT.create(BooleanPickler.class);
+        runPUTest(p, true);
+        runPUTest(p, false);
         runPUTest(p, null);
     }
 }

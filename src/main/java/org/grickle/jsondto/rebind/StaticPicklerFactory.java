@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.grickle.jsondto.client.primitivepicklers.BoolPickler;
+import org.grickle.jsondto.client.primitivepicklers.BooleanPickler;
 import org.grickle.jsondto.client.primitivepicklers.IntPickler;
 import org.grickle.jsondto.client.primitivepicklers.IntegerPickler;
 import org.grickle.jsondto.client.primitivepicklers.StringPickler;
@@ -35,6 +36,7 @@ public class StaticPicklerFactory
         prebuilt.put("boolean", BoolPickler.class.getName());
         prebuilt.put(Integer.class.getName(), IntegerPickler.class.getName());
         prebuilt.put(String.class.getName(), StringPickler.class.getName());
+        prebuilt.put(Boolean.class.getName(), BooleanPickler.class.getName());
 
         picklerFactories.add(new StaticArrayPicklerGenerator.Factory());
         picklerFactories.add(new StaticListPicklerGenerator.Factory());
