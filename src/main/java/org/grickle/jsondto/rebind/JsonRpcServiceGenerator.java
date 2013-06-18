@@ -294,8 +294,8 @@ public class JsonRpcServiceGenerator extends Generator
         case POST:
             return "post";
 
-        case POST_ENCODED:
-            return "post_encoded";
+        case POST_URLENCODED:
+            return "post_urlencoded";
 
         default:
             fail(logger, "HOW DID YOU DO THIS?");

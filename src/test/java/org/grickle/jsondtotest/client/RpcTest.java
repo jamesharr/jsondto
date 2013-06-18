@@ -6,10 +6,15 @@ import org.grickle.jsondto.client.RpcRequestType;
 import org.grickle.jsondto.client.ServerSideException;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.json.client.JSONNull;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * 
+ *
  */
 public class RpcTest extends AbstractGWTTest
 {
@@ -25,9 +30,9 @@ public class RpcTest extends AbstractGWTTest
         delayTestFinish(2000);
         apt.a(1, false, "Hello There", new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String args)
+            public void onSuccess(String echo)
             {
-                assertEquals("[1,false,\"Hello There\"]", args);
+                assertEquals("[1,false,\"Hello There\"]", echo);
                 finishTest();
             }
             @Override
@@ -70,6 +75,35 @@ public class RpcTest extends AbstractGWTTest
                     e.printStackTrace();
                     fail("Didn't get a ServerSideException back...\n");
                 }
+            }
+        });
+    }
+
+    // Test HTTP POST support
+    @RpcEndpoint(URL="/echoParams", requestMethod=RpcRequestType.POST)
+    public interface PostPicklingService extends JsonRpcService
+    {
+        void a(int a1, boolean b2, String c3, AsyncCallback<String> cb);
+    }
+    public void testPostPickling()
+    {
+        PostPicklingService pps = GWT.create(PostPicklingService.class);
+        delayTestFinish(2000);
+        pps.a(1, false, "Hello There", new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String echo)
+            {
+                JSONObject expected = new JSONObject();
+                expected.put("method", new JSONString("PostPicklingService.a"));
+                expected.put("params", JSONParser.parseLenient("[1,false,\"Hello There\"]"));
+                expected.put("id", JSONNull.getInstance());
+                assertEquals((JSONValue)expected, JSONParser.parseLenient(echo));
+                finishTest();
+            }
+            @Override
+            public void onFailure(Throwable arg0)
+            {
+                arg0.printStackTrace();
             }
         });
     }

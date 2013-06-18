@@ -43,5 +43,5 @@ public enum RpcRequestType {
      * Results in this POST data (minus the new lines, plus url encoding)
      *   method=Foo.barThis&params=[1,2,3]&id=null
      */
-    POST_ENCODED,
+    POST_URLENCODED,
 }

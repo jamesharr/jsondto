@@ -12,16 +12,18 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * This is used by the RPC generator to make HTTP requests.
- * 
+ *
  * Probably not a good idea to use this directly.
  */
 public class RpcHTTPUtil
 {
+
     private static String chooseUrl(String url, String devUrl)
     {
         return GWT.isProdMode() ? url : devUrl;
@@ -29,7 +31,7 @@ public class RpcHTTPUtil
 
     /**
      * NOT IMPLEMENTED YET
-     * 
+     *
      * @param url
      * @param devUrl
      * @param method
@@ -48,27 +50,33 @@ public class RpcHTTPUtil
         + "&params=" + URL.encodeQueryString(params.toString())
         + "&id=null";
 
-        sendRequest(RequestBuilder.GET, requestUrl, null, cb);
+        sendRequest(RequestBuilder.GET, requestUrl, null, null, cb);
     }
 
     public static void post(String url, String devUrl, String method, JSONArray params, final AsyncCallback<JSONValue> cb)
     {
-        sendRequest(RequestBuilder.POST, chooseUrl(url,devUrl), params.toString(), cb);
+        JSONObject data = new JSONObject();
+        data.put("method", new JSONString(method));
+        data.put("params", params);
+        data.put("id", JSONNull.getInstance());
+        sendRequest(RequestBuilder.POST, chooseUrl(url,devUrl), "application/json-rpc", data.toString(), cb);
     }
 
-    public static void post_urlencode(String url, String devUrl, String method, JSONArray params, final AsyncCallback<JSONValue> cb)
+    public static void post_urlencoded(String url, String devUrl, String method, JSONArray params, final AsyncCallback<JSONValue> cb)
     {
         String data = "method=" + URL.encodeQueryString(method)
         + "&params=" + URL.encodeQueryString(params.toString())
         + "&id=null";
 
-        sendRequest(RequestBuilder.POST, chooseUrl(url,devUrl), data, cb);
+        sendRequest(RequestBuilder.POST, chooseUrl(url,devUrl), "application/x-www-form-urlencoded", data, cb);
     }
 
-    private static void sendRequest(Method method, String requestUrl, String data, final AsyncCallback<JSONValue> cb)
+    private static void sendRequest(Method method, String requestUrl, String content_type, String data, final AsyncCallback<JSONValue> cb)
     {
         RequestBuilder rb = new RequestBuilder(method, requestUrl);
-        rb.setHeader("Content-Type", "application/json-rpc");
+        if ( content_type != null )
+            rb.setHeader("Content-Type", content_type);
+        // rb.setHeader("Content-Type", "application/json-rpc");
         rb.setHeader("Accept", "application/json-rpc");
 
         // TODO - simplify the nesting with a convenience function or two
@@ -123,4 +131,5 @@ public class RpcHTTPUtil
             cb.onFailure(e);
         }
     }
+
 }
